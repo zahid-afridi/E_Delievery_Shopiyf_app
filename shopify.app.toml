@@ -1,0 +1,29 @@
+# Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
+
+client_id = "114ba644127ad3f4278c8e384c114827"
+application_url = "https://travelers-thehun-sagem-configurations.trycloudflare.com"
+embedded = true
+name = "ez-delievry"
+handle = "ez-delievry"
+
+[build]
+include_config_on_deploy = true
+dev_store_url = "paymenttest-store.myshopify.com"
+automatically_update_urls_on_dev = true
+
+[webhooks]
+api_version = "2024-10"
+
+[access_scopes]
+# Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
+scopes = "write_products"
+
+[auth]
+redirect_urls = [
+  "https://travelers-thehun-sagem-configurations.trycloudflare.com/auth/callback",
+  "https://travelers-thehun-sagem-configurations.trycloudflare.com/auth/shopify/callback",
+  "https://travelers-thehun-sagem-configurations.trycloudflare.com/api/auth/callback"
+]
+
+[pos]
+embedded = false
