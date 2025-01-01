@@ -1,7 +1,7 @@
 # Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
 
 client_id = "114ba644127ad3f4278c8e384c114827"
-application_url = "https://travelers-thehun-sagem-configurations.trycloudflare.com"
+application_url = "https://membership-adventure-right-asylum.trycloudflare.com"
 embedded = true
 name = "ez-delievry"
 handle = "ez-delievry"
@@ -20,9 +20,9 @@ scopes = "write_products"
 
 [auth]
 redirect_urls = [
-  "https://travelers-thehun-sagem-configurations.trycloudflare.com/auth/callback",
-  "https://travelers-thehun-sagem-configurations.trycloudflare.com/auth/shopify/callback",
-  "https://travelers-thehun-sagem-configurations.trycloudflare.com/api/auth/callback"
+  "https://membership-adventure-right-asylum.trycloudflare.com/auth/callback",
+  "https://membership-adventure-right-asylum.trycloudflare.com/auth/shopify/callback",
+  "https://membership-adventure-right-asylum.trycloudflare.com/api/auth/callback"
 ]
 
 [pos]
