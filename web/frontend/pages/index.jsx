@@ -1,8 +1,10 @@
 import {Page, LegacyCard, DataTable} from '@shopify/polaris';
+import { useEffect } from 'react';
 import {useState, useCallback} from 'react';
 
 function SortableDataTableExample() {
   const [sortedRows, setSortedRows] = useState(null);
+  const [orders,setOrders]=useState([])
 
   const initiallySortedRows = [
     ['dsua2e', 'Emerald Silk Gown', 'Karachi', '29/03/2022', 'Completed'],
@@ -12,21 +14,49 @@ function SortableDataTableExample() {
     ['3wr2ds', 'Big BBC', 'Africa', '23/02/2023', 'Pending'],
   ];
 
-  const rows = sortedRows ? sortedRows : initiallySortedRows;
+  const rows = sortedRows ? sortedRows : orders && orders.map((order)=>[
+     order.id,
+     order.service.title || 'N/A',
+     order.delivery.address || 'N/A',
+     order.createdAt || 'N/A',
+     order.status || 'N/A',
+  ]);
 
   const handleSort = useCallback(
     (index, direction) => setSortedRows(sortRows(rows, index, direction)),
     [rows],
   );
+  useEffect(()=>{
+    GetOrders()
+  },[])
+  const GetOrders=async()=>{
+    try {
+      const token='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNrZ3BNWTBlSXdYY3NTb0pKeDA5aCIsInNvdXJjZSI6ImJ1c2luZXNzIiwiaWF0IjoxNzM1NzM2NDQ0LCJleHAiOjE3MzU3NDAwNDR9.58Gd3C3E3NlbnHt33lTCS6aP6TbtMxmgnOFbsYRkyiE'
+
+          const req=await fetch('https://wrmx.manage.onro.app/api/v1/customer/order/?customerId=ckgpMY0eIwXcsSoJJx09h',{
+            method:'GET',
+            headers:{
+              'Content-Type':'application/json',
+              'Authorization':`Bearer ${token}`
+            }
+          })
+          const response=await req.json();
+          setOrders(response.data)
+          console.log('orders',response)
+      
+    } catch (error) {
+      console.log('error',error)
+    }
+  }
 
   return (
-    <Page title="Sales by Product">
+    <Page title="ORDER INFORMATION">
       <LegacyCard>
         <DataTable
           columnContentTypes={['text', 'text', 'text', 'text', 'text']}
-          headings={['Order Id', 'Order Name', 'Address', 'Date', 'Status']}
+          headings={['Order Id', 'Title', 'Address', 'Date', 'Status']}
           rows={rows}
-          sortable={[false, true, false, false, true]}
+          sortable={[false, false, false, false, true]}
           defaultSortDirection="ascending"
           initialSortColumnIndex={4}
           onSort={handleSort}
