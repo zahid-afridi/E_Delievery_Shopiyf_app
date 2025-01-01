@@ -61,7 +61,7 @@ function Extension() {
             "email": "abcd@pickup.org"
         },
         "delivery": {
-            "address": "KARACHI ",
+            "address": "KARACHI test",
             "addressDetail": "block A2",
             "coordinates": [-0.1405885408344662, 51.50785039521855],
             "fullName": "mosi pann",
@@ -78,16 +78,17 @@ function Extension() {
         },
         "paymentMethod": "Cash",
         "paymentSide": "Sender",
-        "draft": true,
+        "draft": false,
         "note": "note",
         "referenceId": "ref#112"
     }
      try {
+      const token='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNrZ3BNWTBlSXdYY3NTb0pKeDA5aCIsInNvdXJjZSI6ImJ1c2luZXNzIiwiaWF0IjoxNzM1NzMxNzQwLCJleHAiOjE3MzU3MzUzNDB9.nd042zuDSiFplLYqWOdhx2ZGZqNPicYYlXvmdQMFero'
       const req=await fetch('https://wrmx.manage.onro.app/api/v1/customer/order/pickup-delivery', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNrZ3BNWTBlSXdYY3NTb0pKeDA5aCIsInNvdXJjZSI6ImJ1c2luZXNzIiwiaWF0IjoxNzM1NTYyODExLCJleHAiOjE3MzU1NjY0MTF9.FnYkTE91Qt45xtJNAtqtp2yfEW2EY5pflnc8AzA85hM'
+          'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify(data),
       });
