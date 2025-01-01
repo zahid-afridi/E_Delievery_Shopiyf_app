@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   reactExtension,
   BlockStack,
   Select,
+  Button,
   TextField,
   Text,
   Checkbox,
@@ -11,33 +12,33 @@ import {
   useInstructions,
   useTranslate,
   Banner,
-  Image
+  Image,
 } from "@shopify/ui-extensions-react/checkout";
 
 import { useTotalAmount } from "@shopify/ui-extensions-react/checkout";
-
-
 
 export default reactExtension("purchase.checkout.block.render", () => (
   <Extension />
 ));
 
 function Extension() {
- 
   const translate = useTranslate();
   const { extension } = useApi();
-  const {amount}=useTotalAmount();
+  const { amount } = useTotalAmount();
   const instructions = useInstructions();
   const applyAttributeChange = useApplyAttributeChange();
- 
- console.log('checkout',amount)
+
+  
+
+  console.log("checkout", amount);
   const [isEZDeliverySelected, setIsEZDeliverySelected] = React.useState(true);
   const [checked, setCheck] = React.useState({
     sameday: false,
     nextday: false,
     priority: false,
   });
-  const [selectedDeliveryOption, setSelectedDeliveryOption] = React.useState("");
+  const [selectedDeliveryOption, setSelectedDeliveryOption] =
+    React.useState("");
   const [selectedTimeSlot, setSelectedTimeSlot] = React.useState("");
 
   const DeliveryCheck = (name) => {
@@ -77,8 +78,6 @@ function Extension() {
 
   return (
     <BlockStack spacing="loose">
-      
-     
       <Checkbox
         checked={isEZDeliverySelected}
         onChange={(checked) => {
@@ -88,8 +87,6 @@ function Extension() {
       >
         EZ Delivery as a shipping service
       </Checkbox>
-
-     
 
       {isEZDeliverySelected && (
         <>
@@ -135,6 +132,13 @@ function Extension() {
             multiline
             onChange={(value) => handleSpecialInstructionsChange(value)}
           />
+          <Button
+            onPress={() => {
+              console.log("onPress event");
+            }}
+          >
+            Pay now
+          </Button>
         </>
       )}
     </BlockStack>
