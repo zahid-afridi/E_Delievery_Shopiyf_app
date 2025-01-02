@@ -4,6 +4,7 @@ import { NavMenu } from "@shopify/app-bridge-react";
 import Routes from "./Routes";
 import  { Toaster } from 'react-hot-toast'
 import { QueryProvider, PolarisProvider } from "./components";
+import Generatelabel from "./pages/Generatelabel.jsx";
 
 export default function App() {
   // Any .tsx or .jsx files in /pages will become a route
@@ -20,7 +21,7 @@ export default function App() {
         <QueryProvider>
           <NavMenu>
             <a href="/" rel="home" />
-            <a href="/pagename">{t("NavigationMenu.pageName")}</a>
+            <a href="/Generatelabel" element={<Generatelabel/>}>Generate Label</a>
           </NavMenu>
           <Routes pages={pages} />
         </QueryProvider>
