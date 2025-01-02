@@ -16,6 +16,7 @@ useBuyerJourney,
 } from "@shopify/ui-extensions-react/checkout";
 
 import { useTotalAmount } from "@shopify/ui-extensions-react/checkout";
+import { Token } from "../../../web/frontend/AuthToken/AuthToken";
 
 
 
@@ -58,7 +59,7 @@ function Extension() {
             "coordinates": [-0.15869881563038823, 51.51268479847148],
             "fullName": "ALI ATHER",
             "phone": "611522",
-            "email": "mailto:abcd@pickup.org"
+            "email": "abcd@pickup.org"
         },
         "delivery": {
             "address": "KARACHI test",
@@ -66,7 +67,7 @@ function Extension() {
             "coordinates": [-0.1405885408344662, 51.50785039521855],
             "fullName": "mosi pann",
             "phone": "1154123",
-            "email": "mailto:abcd@delivery.org"
+            "email": "abcd@delivery.org"
         },
         "service": {
             "id": "1Vr4gyMBELnYNyXIpyYHE",
@@ -83,12 +84,12 @@ function Extension() {
         "referenceId": "ref#112"
     }
      try {
-      const token='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNrZ3BNWTBlSXdYY3NTb0pKeDA5aCIsInNvdXJjZSI6ImJ1c2luZXNzIiwiaWF0IjoxNzM1NzMxNzQwLCJleHAiOjE3MzU3MzUzNDB9.nd042zuDSiFplLYqWOdhx2ZGZqNPicYYlXvmdQMFero'
+      
       const req=await fetch('https://wrmx.manage.onro.app/api/v1/customer/order/pickup-delivery', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          'Authorization': `Bearer ${Token}`
         },
         body: JSON.stringify(data),
       });

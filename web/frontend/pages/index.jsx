@@ -1,60 +1,184 @@
-import {Page, LegacyCard, DataTable} from '@shopify/polaris';
-import { useEffect } from 'react';
-import {useState, useCallback} from 'react';
+import {
+  Page,
+  LegacyCard,
+  DataTable,
+  Button,
+  Popover,
+  ActionList,
+  TextField,
+  HorizontalStack
+} from '@shopify/polaris';
+import { useEffect, useState, useCallback } from 'react';
+import { BaseUrl, CustomerId, Token } from '../AuthToken/AuthToken';
+import toast from 'react-hot-toast';
 
 function SortableDataTableExample() {
   const [sortedRows, setSortedRows] = useState(null);
-  const [orders,setOrders]=useState([])
+  const [orders, setOrders] = useState([]);
+  const [searchText, setSearchText] = useState('');
+  const [filteredOrders, setFilteredOrders] = useState([]);
+  const [activePopoverIndex, setActivePopoverIndex] = useState(null);
 
-  const initiallySortedRows = [
-    ['dsua2e', 'Emerald Silk Gown', 'Karachi', '29/03/2022', 'Completed'],
-    ['hasd12', 'Bay dsaa Gown', 'Islamabad', '29/03/2025', 'Pending'],
-    ['da213d', 'Baby Gown', 'Rawalpindi', '30/02/2028', 'Canceled'],
-    ['dsa23s', 'Baby as', 'Rawalpindi', '30/02/2023', 'Completed'],
-    ['3wr2ds', 'Big BBC', 'Africa', '23/02/2023', 'Pending'],
-  ];
+  const formatDate = (timestamp) => {
+    if (!timestamp) return 'N/A';
+    const date = new Date(Number(timestamp));
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    });
+  };
 
-  const rows = sortedRows ? sortedRows : orders && orders.map((order)=>[
-     order.id,
-     order.service.title || 'N/A',
-     order.delivery.address || 'N/A',
-     order.createdAt || 'N/A',
-     order.status || 'N/A',
-  ]);
+  const rows = sortedRows
+    ? sortedRows
+    : filteredOrders.map((order, index) => [
+        order.id,
+        order.service?.title || 'N/A',
+        order.delivery?.address || 'N/A',
+        formatDate(order.createdAt),
+        order.status || 'N/A',
+        order.status === 'ReadyForDelivery' ? (
+          ''
+        ) : (
+          <Popover
+            active={activePopoverIndex === index}
+            activator={
+              <Button plain onClick={() => togglePopover(index)}>
+                •••
+              </Button>
+            }
+            onClose={() => togglePopover(null)}
+          >
+            <ActionList
+              items={[
+                {
+                  content: 'Confirm',
+                  onAction: () => handleStatusChange(order.id, 'Confirmed'),
+                },
+                {
+                  content: 'Draft',
+                  onAction: () => handleStatusChange(order.id, 'Draft'),
+                },
+                {
+                  content: 'Cancel',
+                  onAction: () => handleStatusChange(order.id, 'Canceled'),
+                },
+              ]}
+            />
+          </Popover>
+        ),
+      ]);
 
   const handleSort = useCallback(
     (index, direction) => setSortedRows(sortRows(rows, index, direction)),
-    [rows],
+    [rows]
   );
-  useEffect(()=>{
-    GetOrders()
-  },[])
-  const GetOrders=async()=>{
-    try {
-      const token='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNrZ3BNWTBlSXdYY3NTb0pKeDA5aCIsInNvdXJjZSI6ImJ1c2luZXNzIiwiaWF0IjoxNzM1NzM2NDQ0LCJleHAiOjE3MzU3NDAwNDR9.58Gd3C3E3NlbnHt33lTCS6aP6TbtMxmgnOFbsYRkyiE'
 
-          const req=await fetch('https://wrmx.manage.onro.app/api/v1/customer/order/?customerId=ckgpMY0eIwXcsSoJJx09h',{
-            method:'GET',
-            headers:{
-              'Content-Type':'application/json',
-              'Authorization':`Bearer ${token}`
-            }
-          })
-          const response=await req.json();
-          setOrders(response.data)
-          console.log('orders',response)
-      
+  useEffect(() => {
+    GetOrders();
+  }, []);
+
+  useEffect(() => {
+    const lowerSearch = searchText.toLowerCase();
+    setFilteredOrders(
+      orders.filter((order) =>
+        order.id.toString().toLowerCase().includes(lowerSearch)
+      )
+    );
+  }, [searchText, orders]);
+
+  const GetOrders = async () => {
+    try {
+      const req = await fetch(
+        `${BaseUrl}/api/v1/customer/order/?customerId=${CustomerId}`,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${Token}`,
+          },
+        }
+      );
+      const response = await req.json();
+      if (req.ok) {
+        setOrders(response.data);
+        setFilteredOrders(response.data);
+      } else {
+        toast.error(response.message || 'Failed to fetch orders');
+      }
     } catch (error) {
-      console.log('error',error)
+      console.error('Error fetching orders:', error);
+      toast.error('An unexpected error occurred');
     }
-  }
+  };
+
+  const togglePopover = (index) => {
+    setActivePopoverIndex((prevIndex) => (prevIndex === index ? null : index));
+  };
+
+  const handleStatusChange = async (orderId, newStatus) => {
+    let endpoint;
+    let requestBody = {
+      orderId,
+      customerId: CustomerId,
+    };
+
+    if (newStatus === 'Confirmed') {
+      endpoint = '/pickup-delivery/confirm';
+    } else if (newStatus === 'Draft') {
+      endpoint = '/pickup-delivery/draft';
+    } else if (newStatus === 'Canceled') {
+      endpoint = '/pickup-delivery/cancel';
+      requestBody = {
+        ...requestBody,
+        failureReasonId: 'FhbZzcUwXAD9g5sH_HVS-',
+        failureReasonText: 'I want to change my order details',
+      };
+    }
+
+    try {
+      const req = await fetch(`${BaseUrl}/api/v1/customer/order${endpoint}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${Token}`,
+        },
+        body: JSON.stringify(requestBody),
+      });
+      const response = await req.json();
+      if (req.ok) {
+        setOrders((prevOrders) =>
+          prevOrders.map((order) =>
+            order.id === orderId ? { ...order, status: newStatus } : order
+          )
+        );
+        toast.success(response.message || `${newStatus} successfully applied`);
+      } else {
+        toast.error(response.message || `Failed to change status to ${newStatus}`);
+      }
+    } catch (error) {
+      console.error(`Error changing status to ${newStatus}:`, error);
+      toast.error('An unexpected error occurred');
+    }
+  };
 
   return (
     <Page title="ORDER INFORMATION">
       <LegacyCard>
+        <HorizontalStack gap="2" wrap>
+          <TextField
+            labelHidden
+            label="Search"
+            value={searchText}
+            onChange={(value) => setSearchText(value)}
+            placeholder="Search by Order ID"
+            autoComplete="off"
+            size="small"
+          />
+        </HorizontalStack>
         <DataTable
-          columnContentTypes={['text', 'text', 'text', 'text', 'text']}
-          headings={['Order Id', 'Title', 'Address', 'Date', 'Status']}
+          columnContentTypes={['text', 'text', 'text', 'text', 'text', 'text']}
+          headings={['Order Id', 'Title', 'Address', 'Date', 'Status', 'Action']}
           rows={rows}
           sortable={[false, false, false, false, true]}
           defaultSortDirection="ascending"
@@ -71,11 +195,9 @@ function SortableDataTableExample() {
       const valueB = rowB[index] || '';
 
       if (typeof valueA === 'string' && typeof valueB === 'string') {
-        // For string comparison (e.g., "Status")
         const comparison = valueA.localeCompare(valueB);
         return direction === 'ascending' ? comparison : -comparison;
       } else {
-        // For numeric or other types of sorting
         const comparison = parseFloat(valueA) - parseFloat(valueB);
         return direction === 'ascending' ? comparison : -comparison;
       }
