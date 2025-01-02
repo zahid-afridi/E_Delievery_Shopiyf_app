@@ -4,9 +4,13 @@ import { readFileSync } from "fs";
 import express from "express";
 import serveStatic from "serve-static";
 
+import connectDB from "./Utils/db.js";
+connectDB();
+
 import shopify from "./shopify.js";
 import productCreator from "./product-creator.js";
 import PrivacyWebhookHandlers from "./privacy.js";
+import router from "./Routes/userRoutes.js";
 
 const PORT = parseInt(
   process.env.BACKEND_PORT || process.env.PORT || "3000",
@@ -31,13 +35,13 @@ app.post(
   shopify.config.webhooks.path,
   shopify.processWebhooks({ webhookHandlers: PrivacyWebhookHandlers })
 );
-
+app.use(express.json());
 // If you are adding routes outside of the /api path, remember to
 // also add a proxy rule for them in web/frontend/vite.config.js
 
 app.use("/api/*", shopify.validateAuthenticatedSession());
 
-app.use(express.json());
+app.use("/api", router);
 
 app.get("/api/products/count", async (_req, res) => {
   const client = new shopify.api.clients.Graphql({
