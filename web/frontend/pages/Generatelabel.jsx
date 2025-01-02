@@ -11,19 +11,23 @@ import { BaseUrl, CustomerId, Token } from "../AuthToken/AuthToken";
 
 export default function Generatelabel() {
   const [Label, setLabel] = useState("");
-  const [transcript, setTranscript] = useState(null);
+  const [pdfUrl, setPdfUrl] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [ids, setIds] = useState([]);
 
-  const handleChange = (value) => setLabel(value);
+  const handleLabelChange = (value) => setLabel(value);
 
-  // Simulate API call
+  const handleIdsChange = (value) => {
+    const arrayOfIds = value.split(",").map((id) => id.trim());
+    setIds(arrayOfIds);
+  };
+
   const handleGenerateLabel = async () => {
-    if (!Label) return;
+    if (!ids.length) return;
 
     setLoading(true);
 
     try {
-      // Replace with your API call logic
       const response = await fetch(
         `${BaseUrl}/api/v1/customer/order/shipment-label/export-pdf`,
         {
@@ -33,17 +37,20 @@ export default function Generatelabel() {
             Authorization: `Bearer ${Token}`,
           },
           body: JSON.stringify({
-            ids: [
-              "RuqIsdHNxrYzcx9ol89Tq",
-            ],
+            ids: ids,
             customerId: CustomerId,
           }),
         }
       );
-      const data = await response.json();
-      console.log(data)
 
-      setTranscript(data.transcript);
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      setPdfUrl(url); // Store the URL for the PDF
+      console.log("Label generated successfully");
     } catch (error) {
       console.error("Error generating label:", error);
     } finally {
@@ -52,13 +59,16 @@ export default function Generatelabel() {
   };
 
   const handleDownload = () => {
-    // Replace with actual logic to download the file
-    const blob = new Blob([transcript], { type: "application/pdf" });
-    const url = URL.createObjectURL(blob);
+    if (!pdfUrl) return;
+
     const link = document.createElement("a");
-    link.href = url;
-    link.download = `${Label}_transcript.pdf`;
+    link.href = pdfUrl;
+    link.download = `shipment_label.pdf`;
     link.click();
+
+    // Optionally revoke the Blob URL to free memory
+    URL.revokeObjectURL(pdfUrl);
+    setPdfUrl(null); // Disable download after one click
   };
 
   return (
@@ -74,27 +84,31 @@ export default function Generatelabel() {
         <Stack vertical spacing="tight">
           <Heading>Generate Order Label</Heading>
           <Text>
-            Enter the Order ID below and click on the "Generate Label" button.
-            Once the label is generated, you can download the transcript.
+            Enter the Order IDs below (comma-separated) and click on the "Generate Label" button.
+            Once the label is generated, you can view or download the transcript.
           </Text>
 
           <TextField
-            label="Order ID"
+            label="Order IDs"
             value={Label}
-            onChange={handleChange}
-            placeholder="Enter the Order ID"
+            onChange={handleLabelChange}
+            placeholder="Enter Order IDs (comma-separated)"
             fullWidth
           />
 
-          <Button primary loading={loading} onClick={handleGenerateLabel}>
+          <Button primary loading={loading} onClick={() => handleIdsChange(Label) || handleGenerateLabel()}>
             Generate Label
           </Button>
 
-          {transcript && (
+          {pdfUrl && (
             <div style={{ marginTop: "20px" }}>
-              <Text variant="bodyMd">
-                Transcript generated successfully. You can download it below:
-              </Text>
+              <iframe
+                src={pdfUrl}
+                title="PDF Preview"
+                width="100%"
+                height="400px"
+                style={{ border: "1px solid #ccc", marginBottom: "10px" }}
+              ></iframe>
               <Button onClick={handleDownload} primary>
                 Download Transcript
               </Button>
