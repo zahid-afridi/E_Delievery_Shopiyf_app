@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const dbCon = "mongodb://127.0.0.1:27017/Shopify";
+const dbCon = "mongodb://127.0.0.1:27017/EZdelivery";
 
 const connectDB = async () => {
   try {
