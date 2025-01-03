@@ -1,15 +1,10 @@
 # Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
 
 client_id = "d68aabe6824d21881759ddc7815d0c2f"
-application_url = "https://showed-pee-beijing-senator.trycloudflare.com"
+application_url = "https://recorders-arrivals-sea-tag.trycloudflare.com"
 embedded = true
 name = "ex-delievry"
 handle = "ex-delievry"
-
-[build]
-include_config_on_deploy = true
-dev_store_url = "hamzateststorepk.myshopify.com"
-automatically_update_urls_on_dev = true
 
 [webhooks]
 api_version = "2024-10"
@@ -20,10 +15,14 @@ scopes = "read_content,read_locales,read_products,read_script_tags,read_themes,w
 
 [auth]
 redirect_urls = [
-  "https://showed-pee-beijing-senator.trycloudflare.com/auth/callback",
-  "https://showed-pee-beijing-senator.trycloudflare.com/auth/shopify/callback",
-  "https://showed-pee-beijing-senator.trycloudflare.com/api/auth/callback"
+  "https://recorders-arrivals-sea-tag.trycloudflare.com/auth/callback",
+  "https://recorders-arrivals-sea-tag.trycloudflare.com/auth/shopify/callback",
+  "https://recorders-arrivals-sea-tag.trycloudflare.com/api/auth/callback"
 ]
 
 [pos]
 embedded = false
+
+[build]
+dev_store_url = "hamzateststorepk.myshopify.com"
+automatically_update_urls_on_dev = true

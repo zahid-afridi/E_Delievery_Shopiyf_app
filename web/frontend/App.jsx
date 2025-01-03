@@ -6,7 +6,6 @@ import { Toaster } from "react-hot-toast";
 import { QueryProvider, PolarisProvider } from "./components";
 import Generatelabel from "./pages/Generatelabel.jsx";
 import React, { useState } from 'react';
-import { AppProvider, Page, Form, FormLayout, TextField, Button, Card } from '@shopify/polaris';
 import LoginForm from "./components/LoginForm.jsx";
 
 export default function App() {
