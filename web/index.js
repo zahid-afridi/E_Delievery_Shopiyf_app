@@ -11,6 +11,7 @@ import shopify from "./shopify.js";
 import productCreator from "./product-creator.js";
 import PrivacyWebhookHandlers from "./privacy.js";
 import router from "./Routes/userRoutes.js";
+import StoreModel from "./Models/Store.js";
 
 const PORT = parseInt(
   process.env.BACKEND_PORT || process.env.PORT || "3000",
@@ -43,20 +44,40 @@ app.use("/api/*", shopify.validateAuthenticatedSession());
 
 app.use("/api", router);
 
-app.get("/api/products/count", async (_req, res) => {
-  const client = new shopify.api.clients.Graphql({
-    session: res.locals.shopify.session,
-  });
+app.get('/api/store/info', async (req, res) => {
+  try {
+    const Store = await shopify.api.rest.Shop.all({
+      session: res.locals.shopify.session,
+    });
+    // console.log("Storename",Store.data[0].domain)
+      // console.log('Store Information',Store)
+    if (Store && Store.data && Store.data.length > 0) {
+      const storeName = Store.data[0].name;
+      const domain = Store.data[0].domain;
+      const country=Store.data[0].country;
+      const Store_Id=Store.data[0].id
+     
 
-  const countData = await client.request(`
-    query shopifyProductCount {
-      productsCount {
-        count
+      // Check if storeName exists in the database
+      const existingStore = await StoreModel.findOne({ storeName });
+
+      if (!existingStore) {
+        // If it doesn't exist, save it
+        const newStore = new StoreModel({ storeName,domain,country,Store_Id });
+        await newStore.save();
+    
+      
       }
-    }
-  `);
 
-  res.status(200).send({ count: countData.data.productsCount.count });
+      // Send response with existingStore only
+      res.status(200).json(existingStore); // Send existingStore directly in the response
+    } else {
+      res.status(404).json({ message: 'Store not found' });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server Error" });
+  }
 });
 
 app.post("/api/products", async (_req, res) => {
