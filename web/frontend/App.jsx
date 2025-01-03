@@ -10,6 +10,20 @@ import LoginForm from "./components/LoginForm.jsx";
 
 export default function App() {
   const [islogin, setIslogin] = useState(true);
+
+  const storefetch = async () => {
+    const response = await fetch("/api/store/info", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    const data = await response.json();
+   console.log(data)
+  };
+
+  storefetch();
+
   // Any .tsx or .jsx files in /pages will become a route
   // See documentation for <Routes /> for more info
   const pages = import.meta.glob("./pages/**/!(*.test.[jt]sx)*.([jt]sx)", {
