@@ -10,7 +10,7 @@ import { AppProvider, Page, Form, FormLayout, TextField, Button, Card } from '@s
 import LoginForm from "./components/LoginForm.jsx";
 
 export default function App() {
-  const [islogin, setIslogin] = useState(false);
+  const [islogin, setIslogin] = useState(true);
   // Any .tsx or .jsx files in /pages will become a route
   // See documentation for <Routes /> for more info
   const pages = import.meta.glob("./pages/**/!(*.test.[jt]sx)*.([jt]sx)", {

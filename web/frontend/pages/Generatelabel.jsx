@@ -1,31 +1,41 @@
+import React, { useState } from "react";
 import {
-  TextField,
   Button,
   Card,
   Stack,
   Heading,
   Text,
 } from "@shopify/polaris";
-import React, { useState } from "react";
+import Select from "react-select";
+import makeAnimated from "react-select/animated";
 import { BaseUrl, CustomerId, Token } from "../AuthToken/AuthToken";
 
-export default function Generatelabel() {
-  const [Label, setLabel] = useState("");
+const animatedComponents = makeAnimated();
+
+export default function GenerateLabel() {
+  const [selectedOptions, setSelectedOptions] = useState([]);
   const [pdfUrl, setPdfUrl] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [ids, setIds] = useState([]);
+  const [error, setError] = useState(null);
 
-  const handleLabelChange = (value) => setLabel(value);
-
-  const handleIdsChange = (value) => {
-    const arrayOfIds = value.split(",").map((id) => id.trim());
-    setIds(arrayOfIds);
-  };
+  // Mock options for the dropdown (replace with real options from API if needed)
+  const orderOptions = [
+    { value: "sHwKEzHAPoFas0K9bTtsc", label: "Order 1" },
+    { value: "RuqIsdHNxrYzcx9ol89Tq", label: "Order 2" },
+    { value: "c4DTO0KlM97H4vl9juuDN", label: "Order 3" },
+    { value: "uZoQNLGtyzRfkNlqVylbr", label: "Order 4" },
+  ];
 
   const handleGenerateLabel = async () => {
-    if (!ids.length) return;
+    if (!selectedOptions.length) {
+      setError("Please select at least one order.");
+      return;
+    }
 
     setLoading(true);
+    setError(null);
+
+    const ids = selectedOptions.map((option) => option.value);
 
     try {
       const response = await fetch(
@@ -37,7 +47,7 @@ export default function Generatelabel() {
             Authorization: `Bearer ${Token}`,
           },
           body: JSON.stringify({
-            ids: ids,
+            ids,
             customerId: CustomerId,
           }),
         }
@@ -49,10 +59,9 @@ export default function Generatelabel() {
 
       const blob = await response.blob();
       const url = URL.createObjectURL(blob);
-      setPdfUrl(url); // Store the URL for the PDF
-      console.log("Label generated successfully");
+      setPdfUrl(url);
     } catch (error) {
-      console.error("Error generating label:", error);
+      setError("Failed to generate label. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -63,12 +72,11 @@ export default function Generatelabel() {
 
     const link = document.createElement("a");
     link.href = pdfUrl;
-    link.download = `shipment_label.pdf`;
+    link.download = "shipment_label.pdf";
     link.click();
 
-    // Optionally revoke the Blob URL to free memory
     URL.revokeObjectURL(pdfUrl);
-    setPdfUrl(null); // Disable download after one click
+    setPdfUrl(null);
   };
 
   return (
@@ -84,19 +92,23 @@ export default function Generatelabel() {
         <Stack vertical spacing="tight">
           <Heading>Generate Order Label</Heading>
           <Text>
-            Enter the Order IDs below (comma-separated) and click on the "Generate Label" button.
-            Once the label is generated, you can view or download the transcript.
+            Select the Order IDs below and click on "Generate Label".
           </Text>
 
-          <TextField
-            label="Order IDs"
-            value={Label}
-            onChange={handleLabelChange}
-            placeholder="Enter Order IDs (comma-separated)"
-            fullWidth
-          />
+          {/* Make the dropdown wider */}
+          <div style={{ width: "800px" }}>
+            <Select
+              components={animatedComponents}
+              isMulti
+              options={orderOptions}
+              onChange={setSelectedOptions}
+              placeholder="Select Order IDs"
+            />
+          </div>
 
-          <Button primary loading={loading} onClick={() => handleIdsChange(Label) || handleGenerateLabel()}>
+          {error && <Text color="critical">{error}</Text>}
+
+          <Button primary loading={loading} onClick={handleGenerateLabel}>
             Generate Label
           </Button>
 
