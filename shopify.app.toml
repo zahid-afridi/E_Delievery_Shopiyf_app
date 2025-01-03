@@ -1,7 +1,7 @@
 # Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
 
 client_id = "114ba644127ad3f4278c8e384c114827"
-application_url = "https://beth-swaziland-accompanied-adding.trycloudflare.com"
+application_url = "https://niagara-bracelets-prospect-metallic.trycloudflare.com"
 embedded = true
 name = "ez-delievry"
 handle = "ez-delievry"
@@ -20,9 +20,9 @@ scopes = "write_products"
 
 [auth]
 redirect_urls = [
-  "https://beth-swaziland-accompanied-adding.trycloudflare.com/auth/callback",
-  "https://beth-swaziland-accompanied-adding.trycloudflare.com/auth/shopify/callback",
-  "https://beth-swaziland-accompanied-adding.trycloudflare.com/api/auth/callback"
+  "https://niagara-bracelets-prospect-metallic.trycloudflare.com/auth/callback",
+  "https://niagara-bracelets-prospect-metallic.trycloudflare.com/auth/shopify/callback",
+  "https://niagara-bracelets-prospect-metallic.trycloudflare.com/api/auth/callback"
 ]
 
 [pos]
