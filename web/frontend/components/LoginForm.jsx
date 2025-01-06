@@ -8,21 +8,18 @@ import {
   Button,
   Card,
 } from "@shopify/polaris";
+import { useSelector } from "react-redux";
+import toast from "react-hot-toast";
 
-export default function LoginForm() {
+export default function LoginForm({ setRefresh }) {
   const [clientId, setClientId] = useState("");
   const [clientSecret, setClientSecret] = useState("");
   const [customerId, setCustomerId] = useState("");
   const [serviceId, setServiceId] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-
+  const StoreDetail = useSelector((state) => state.store.StoreDetail);
 
   const handleSubmit = async () => {
-    if (!clientId || !clientSecret || !customerId || !serviceId) {
-      alert("All fields are required");
-      return;
-    }
     setIsSubmitting(true);
 
     const formData = {
@@ -30,6 +27,8 @@ export default function LoginForm() {
       clientSecret,
       customerId,
       serviceId,
+
+      Store_Id: StoreDetail && StoreDetail.Store_Id,
     };
 
     // Perform form submission logic here
@@ -43,6 +42,14 @@ export default function LoginForm() {
       });
       const data = await response.json();
       console.log(data);
+      if (response.ok) {
+        toast.success(data.message);
+        setRefresh((prev) => !prev);
+      }
+      if (!response.ok) {
+        toast.error(data.message);
+        return;
+      }
     } catch (error) {
       console.error("Error submitting form:", error);
     } finally {
@@ -67,27 +74,28 @@ export default function LoginForm() {
                 label="Client ID"
                 value={clientId}
                 onChange={(value) => {
-                    console.log(value);
-                    setClientId(value)}}
+                  console.log(value);
+                  setClientId(value.trim());
+                }}
                 autoComplete="off"
               />
               <TextField
                 label="Client Secret"
                 value={clientSecret}
-                onChange={(value) => setClientSecret(value)}
+                onChange={(value) => setClientSecret(value.trim())}
                 autoComplete="off"
                 type="password"
               />
               <TextField
                 label="Customer ID"
                 value={customerId}
-                onChange={(value) => setCustomerId(value)}
+                onChange={(value) => setCustomerId(value.trim())}
                 autoComplete="off"
               />
               <TextField
                 label="Service ID"
                 value={serviceId}
-                onChange={(value) => setServiceId(value)}
+                onChange={(value) => setServiceId(value.trim())}
                 autoComplete="off"
               />
               <Button submit primary loading={isSubmitting}>

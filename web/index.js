@@ -73,7 +73,10 @@ app.get('/api/store/info', async (req, res) => {
       }
 
       // Send response with existingStore only
-      res.status(200).json({existingStore,User:ExistUser ? true : false}); // Send existingStore directly in the response
+      res.status(200).json({StoreDetail:{
+          Store:existingStore,
+          User:ExistUser
+      },User:ExistUser ? true : false}); // Send existingStore directly in the response
     } else {
       res.status(404).json({ message: 'Store not found' });
     }

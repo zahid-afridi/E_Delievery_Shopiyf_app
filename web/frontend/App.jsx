@@ -2,7 +2,6 @@ import { BrowserRouter } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { NavMenu } from "@shopify/app-bridge-react";
 import Routes from "./Routes";
-import { Toaster } from "react-hot-toast";
 import { QueryProvider, PolarisProvider } from "./components";
 import Generatelabel from "./pages/Generatelabel.jsx";
 import React, { useEffect, useState } from "react";
@@ -11,16 +10,19 @@ import { Provider } from "react-redux";
 import { store } from "./redux/Store.js";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
-import { setStoreDetail } from "./redux/slices/StoreSlice.js";
+import { setStoreDetail, setToken, setUser } from "./redux/slices/StoreSlice.js";
+import { BaseUrl } from "./AuthToken/AuthToken.js";
 
 export default function App() {
   const dispatch = useDispatch();
   const [isLogin, setIsLogin] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
+  const [refresh, setRefresh] = useState(false);
+  console.log("Refresh", refresh);
 
   useEffect(() => {
     storefetch();
-  }, []);
+  }, [refresh]);
 
   const storefetch = async () => {
     setIsLoading(true);
@@ -33,7 +35,36 @@ export default function App() {
       });
       const data = await response.json();
       if (response.ok) {
-        dispatch(setStoreDetail(data.existingStore));
+        const user = data.StoreDetail.User;
+        console.log(user);
+        if (user) {
+          dispatch(setUser(user));
+          const jwtresponse = await fetch(
+            `${BaseUrl}/api/v1/customer/auth/access-token`,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                clientId: user.clientId,
+                clientSecret: user.clientSecret,
+              }),
+            }
+          );
+          console.log("Data Reesponse", data.StoreDetail.User);
+          console.log("Refresh api", refresh);
+
+          const token = await jwtresponse.json();
+          console.log("Token", token.data.accessToken);
+          if (token) {
+            dispatch(setToken(token.data.accessToken));
+          }
+        }
+
+        console.log("Data Reesponse", data.StoreDetail.User);
+
+        dispatch(setStoreDetail(data.StoreDetail.Store));
         setIsLogin(data.User);
       }
     } catch (error) {
@@ -51,7 +82,14 @@ export default function App() {
   // Show a loading screen while the API call is in progress
   if (isLoading) {
     return (
-      <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+        }}
+      >
         <h1>Loading...</h1>
       </div>
     );
@@ -61,7 +99,6 @@ export default function App() {
     <PolarisProvider>
       {isLogin ? (
         <>
-          <Toaster />
           <QueryProvider>
             <NavMenu>
               <a href="/" rel="home" />
@@ -73,7 +110,7 @@ export default function App() {
           </QueryProvider>
         </>
       ) : (
-        <LoginForm />
+        <LoginForm setRefresh={setRefresh} />
       )}
     </PolarisProvider>
   );

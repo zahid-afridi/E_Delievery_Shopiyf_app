@@ -1,8 +1,11 @@
 // redux/slices/StoreSlice.js
 import { createSlice } from "@reduxjs/toolkit";
+import { set } from "mongoose";
 
 const initialState = {
   StoreDetail: null,
+  User:null,
+  Token:null
 };
 
 const StoreSlice = createSlice({
@@ -12,8 +15,14 @@ const StoreSlice = createSlice({
     setStoreDetail(state, action) {
       state.StoreDetail = action.payload;
     },
+    setUser(state, action) {
+      state.User = action.payload;
+    },
+    setToken(state, action) {
+      state.Token = action.payload;
+    },
   },
 });
 
-export const { setStoreDetail } = StoreSlice.actions;
+export const { setStoreDetail, setUser, setToken } = StoreSlice.actions;
 export default StoreSlice.reducer; // Make sure this exports the reducer

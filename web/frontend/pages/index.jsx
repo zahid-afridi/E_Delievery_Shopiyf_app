@@ -19,7 +19,7 @@ function SortableDataTableExample() {
   const [searchText, setSearchText] = useState('');
   const [filteredOrders, setFilteredOrders] = useState([]);
   const [activePopoverIndex, setActivePopoverIndex] = useState(null);
-  const StoreDetail = useSelector((state) => state.store.StoreDetail);
+  const StoreDetail = useSelector((state) => state.store);
   console.log('StoreDetail From Redux:', StoreDetail);
   
 
@@ -94,12 +94,12 @@ function SortableDataTableExample() {
   const GetOrders = async () => {
     try {
       const req = await fetch(
-        `${BaseUrl}/api/v1/customer/order/?customerId=${CustomerId}`,
+        `${BaseUrl}/api/v1/customer/order/?customerId=${StoreDetail.User.customerId}`,
         {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${Token}`,
+            Authorization: `Bearer ${StoreDetail.Token}`,
           },
         }
       );
@@ -145,7 +145,7 @@ function SortableDataTableExample() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${Token}`,
+          Authorization: `Bearer ${StoreDetail.Token}`,
         },
         body: JSON.stringify(requestBody),
       });
