@@ -5,7 +5,11 @@ const userSchema = new mongoose.Schema({
   clientSecret: { type: String, required: true },
   customerId: { type: String, required: true },
   serviceId: { type: String, required: true },
-  storeID: { type: String, required: true },
+  Store_Id:{
+    type:String,
+    required:true
+}
+  
 });
 
 const User = mongoose.model("User", userSchema);

@@ -10,8 +10,10 @@ connectDB();
 import shopify from "./shopify.js";
 import productCreator from "./product-creator.js";
 import PrivacyWebhookHandlers from "./privacy.js";
-import StoreModel from "./Models/Store.js";
 import AuthRoutes from "./Routes/userRoutes.js";
+import StoreModel from "./Models/Store.js";
+
+import User from "./Models/user.Model.js";
 
 const PORT = parseInt(
   process.env.BACKEND_PORT || process.env.PORT || "3000",
@@ -60,7 +62,8 @@ app.get('/api/store/info', async (req, res) => {
 
       // Check if storeName exists in the database
       const existingStore = await StoreModel.findOne({ storeName });
-
+      const ExistUser = await User.findOne({ Store_Id });
+    
       if (!existingStore) {
         // If it doesn't exist, save it
         const newStore = new StoreModel({ storeName,domain,country,Store_Id });
@@ -70,7 +73,7 @@ app.get('/api/store/info', async (req, res) => {
       }
 
       // Send response with existingStore only
-      res.status(200).json(existingStore); // Send existingStore directly in the response
+      res.status(200).json({existingStore,User:ExistUser ? true : false}); // Send existingStore directly in the response
     } else {
       res.status(404).json({ message: 'Store not found' });
     }
