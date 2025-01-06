@@ -14,40 +14,53 @@ import { useDispatch } from "react-redux";
 import { setStoreDetail } from "./redux/slices/StoreSlice.js";
 
 export default function App() {
-  const disptch=useDispatch()
+  const dispatch = useDispatch();
   const [isLogin, setIsLogin] = useState(true);
-useEffect(()=>{
-  storefetch();
-},[])
-  if (!isLogin) {
-    return <LoginForm />;
-  }
-  const storefetch = async () => {
-    const response = await fetch("/api/store/info", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    const data = await response.json();
-    if (response.ok) {
-      disptch(setStoreDetail(data))
-    }
-   console.log(data)
-  };
+  const [isLoading, setIsLoading] = useState(true);
 
- 
+  useEffect(() => {
+    storefetch();
+  }, []);
+
+  const storefetch = async () => {
+    setIsLoading(true);
+    try {
+      const response = await fetch("/api/store/info", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      const data = await response.json();
+      if (response.ok) {
+        dispatch(setStoreDetail(data.existingStore));
+        setIsLogin(data.User);
+      }
+    } catch (error) {
+      console.log("Error:", error);
+    } finally {
+      setIsLoading(false); // Stop loading when fetch is complete
+    }
+  };
 
   const pages = import.meta.glob("./pages/**/!(*.test.[jt]sx)*.([jt]sx)", {
     eager: true,
   });
   const { t } = useTranslation();
 
+  // Show a loading screen while the API call is in progress
+  if (isLoading) {
+    return (
+      <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
+        <h1>Loading...</h1>
+      </div>
+    );
+  }
+
   return (
-     
     <PolarisProvider>
-    
-      
+      {isLogin ? (
+        <>
           <Toaster />
           <QueryProvider>
             <NavMenu>
@@ -58,8 +71,10 @@ useEffect(()=>{
             </NavMenu>
             <Routes pages={pages} />
           </QueryProvider>
-      
+        </>
+      ) : (
+        <LoginForm />
+      )}
     </PolarisProvider>
-      
   );
 }
