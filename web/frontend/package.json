@@ -19,7 +19,7 @@
     "@formatjs/intl-locale": "^3.3.2",
     "@formatjs/intl-localematcher": "^0.4.0",
     "@formatjs/intl-pluralrules": "^5.2.4",
-    "@reduxjs/toolkit": "^2.5.0",
+    "@reduxjs/toolkit": "^1.9.5",
     "@shopify/app-bridge": "^3.7.7",
     "@shopify/app-bridge-react": "^4.1.3",
     "@shopify/i18next-shopify": "^0.2.9",
@@ -32,9 +32,11 @@
     "react-hot-toast": "^2.5.1",
     "react-i18next": "^13.0.0",
     "react-query": "^3.34.19",
-    "react-redux": "^9.2.0",
+    "react-redux": "^8.1.3",
     "react-router-dom": "^6.3.0",
     "react-select": "^5.9.0",
+    "reselect": "^5.1.1",
+    "use-sync-external-store": "^1.2.0",
     "vite": "^5.4.0"
   },
   "devDependencies": {

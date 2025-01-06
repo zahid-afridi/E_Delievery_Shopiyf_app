@@ -1,6 +1,6 @@
 
 
-export const Token='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNrZ3BNWTBlSXdYY3NTb0pKeDA5aCIsInNvdXJjZSI6ImJ1c2luZXNzIiwiaWF0IjoxNzM1ODk1MjEyLCJleHAiOjE3MzU4OTg4MTJ9.ofZujAyITsOXmCGbJianZtKRfggDL3puIDEfiiA8o-o'
+export const Token='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNrZ3BNWTBlSXdYY3NTb0pKeDA5aCIsInNvdXJjZSI6ImJ1c2luZXNzIiwiaWF0IjoxNzM2MTUwMTA3LCJleHAiOjE3MzYxNTM3MDd9.s1D3X0JA2_CIMKwlFOaS2w09I5Tv19xzOq8EWoy-1Tk'
 export const CustomerId='ckgpMY0eIwXcsSoJJx09h'
 
 export const BaseUrl='https://wrmx.manage.onro.app'

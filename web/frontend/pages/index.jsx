@@ -11,6 +11,7 @@ import {
 import { useEffect, useState, useCallback } from 'react';
 import { BaseUrl, CustomerId, Token } from '../AuthToken/AuthToken';
 import toast from 'react-hot-toast';
+import { useSelector } from 'react-redux';
 
 function SortableDataTableExample() {
   const [sortedRows, setSortedRows] = useState(null);
@@ -18,6 +19,9 @@ function SortableDataTableExample() {
   const [searchText, setSearchText] = useState('');
   const [filteredOrders, setFilteredOrders] = useState([]);
   const [activePopoverIndex, setActivePopoverIndex] = useState(null);
+  const StoreDetail = useSelector((state) => state.store.StoreDetail);
+  console.log('StoreDetail From Redux:', StoreDetail);
+  
 
   const formatDate = (timestamp) => {
     if (!timestamp) return 'N/A';

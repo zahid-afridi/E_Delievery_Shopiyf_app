@@ -20,10 +20,10 @@ export default function GenerateLabel() {
 
   // Mock options for the dropdown (replace with real options from API if needed)
   const orderOptions = [
-    { value: "sHwKEzHAPoFas0K9bTtsc", label: "Order 1" },
-    { value: "RuqIsdHNxrYzcx9ol89Tq", label: "Order 2" },
-    { value: "c4DTO0KlM97H4vl9juuDN", label: "Order 3" },
-    { value: "uZoQNLGtyzRfkNlqVylbr", label: "Order 4" },
+    { value: "sHwKEzHAPoFas0K9bTtsc", label: "sHwKEzHAPoFas0K9bTtsc" },
+    { value: "RuqIsdHNxrYzcx9ol89Tq", label: "RuqIsdHNxrYzcx9ol89Tq" },
+    { value: "c4DTO0KlM97H4vl9juuDN", label: "c4DTO0KlM97H4vl9juuDN" },
+    { value: "uZoQNLGtyzRfkNlqVylbr", label: "uZoQNLGtyzRfkNlqVylbr" },
   ];
 
   const handleGenerateLabel = async () => {

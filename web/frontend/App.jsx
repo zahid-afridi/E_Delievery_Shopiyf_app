@@ -5,12 +5,23 @@ import Routes from "./Routes";
 import { Toaster } from "react-hot-toast";
 import { QueryProvider, PolarisProvider } from "./components";
 import Generatelabel from "./pages/Generatelabel.jsx";
-import React, { useState } from 'react';
+import React, { useEffect, useState } from "react";
 import LoginForm from "./components/LoginForm.jsx";
+import { Provider } from "react-redux";
+import { store } from "./redux/Store.js";
+import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
+import { setStoreDetail } from "./redux/slices/StoreSlice.js";
 
 export default function App() {
-  const [islogin, setIslogin] = useState(true);
-
+  const disptch=useDispatch()
+  const [isLogin, setIsLogin] = useState(true);
+useEffect(()=>{
+  storefetch();
+},[])
+  if (!isLogin) {
+    return <LoginForm />;
+  }
   const storefetch = async () => {
     const response = await fetch("/api/store/info", {
       method: "GET",
@@ -19,34 +30,36 @@ export default function App() {
       },
     });
     const data = await response.json();
+    if (response.ok) {
+      disptch(setStoreDetail(data))
+    }
    console.log(data)
   };
 
-  storefetch();
+ 
 
-  // Any .tsx or .jsx files in /pages will become a route
-  // See documentation for <Routes /> for more info
   const pages = import.meta.glob("./pages/**/!(*.test.[jt]sx)*.([jt]sx)", {
     eager: true,
   });
   const { t } = useTranslation();
-  if (!islogin) {
-    return <LoginForm />;
-  }
+
   return (
+     
     <PolarisProvider>
-      <BrowserRouter>
-        <Toaster />
-        <QueryProvider>
-          <NavMenu>
-            <a href="/" rel="home" />
-            <a href="/Generatelabel" element={<Generatelabel />}>
-              Generate Label
-            </a>
-          </NavMenu>
-          <Routes pages={pages} />
-        </QueryProvider>
-      </BrowserRouter>
+    
+      
+          <Toaster />
+          <QueryProvider>
+            <NavMenu>
+              <a href="/" rel="home" />
+              <a href="/Generatelabel" element={<Generatelabel />}>
+                Generate Label
+              </a>
+            </NavMenu>
+            <Routes pages={pages} />
+          </QueryProvider>
+      
     </PolarisProvider>
+      
   );
 }
