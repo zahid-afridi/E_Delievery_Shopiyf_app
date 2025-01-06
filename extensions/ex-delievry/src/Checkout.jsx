@@ -114,6 +114,7 @@ function Extension() {
   return (
     <BlockStack spacing="loose">
       {loading && <Text>Loading... Please wait.</Text>} {/* Loader */}
+      x
       {errorMessage && <Banner status="critical" title={errorMessage}></Banner>} {/* Error Banner */}
 
       <Checkbox

@@ -14,11 +14,13 @@ import { useDispatch } from "react-redux";
 import { setStoreDetail } from "./redux/slices/StoreSlice.js";
 
 export default function App() {
-  const disptch=useDispatch()
+  
+
+  const disptch = useDispatch();
   const [isLogin, setIsLogin] = useState(true);
-useEffect(()=>{
-  storefetch();
-},[])
+  useEffect(() => {
+    storefetch();
+  }, []);
   if (!isLogin) {
     return <LoginForm />;
   }
@@ -31,12 +33,10 @@ useEffect(()=>{
     });
     const data = await response.json();
     if (response.ok) {
-      disptch(setStoreDetail(data))
+      disptch(setStoreDetail(data));
     }
-   console.log(data)
+    console.log(data);
   };
-
- 
 
   const pages = import.meta.glob("./pages/**/!(*.test.[jt]sx)*.([jt]sx)", {
     eager: true,
@@ -44,22 +44,17 @@ useEffect(()=>{
   const { t } = useTranslation();
 
   return (
-     
     <PolarisProvider>
-    
-      
-          <Toaster />
-          <QueryProvider>
-            <NavMenu>
-              <a href="/" rel="home" />
-              <a href="/Generatelabel" element={<Generatelabel />}>
-                Generate Label
-              </a>
-            </NavMenu>
-            <Routes pages={pages} />
-          </QueryProvider>
-      
+      <Toaster />
+      <QueryProvider>
+        <NavMenu>
+          <a href="/" rel="home" />
+          <a href="/Generatelabel" element={<Generatelabel />}>
+            Generate Label
+          </a>
+        </NavMenu>
+        <Routes pages={pages} />
+      </QueryProvider>
     </PolarisProvider>
-      
   );
 }

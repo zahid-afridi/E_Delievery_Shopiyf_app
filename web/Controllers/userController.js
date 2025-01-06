@@ -4,7 +4,7 @@ export const registerUser = async (req, res) => {
   try {
     const { clientId, clientSecret, customerId, serviceId } = req.body;
 
-    if (!clientId || !clientSecret || !customerId || !serviceId) {
+    if (!clientId || !clientSecret || !customerId || !serviceId ) {
       return res.status(400).json({ error: "All fields are required" });
     }
     const existingUser = await User.findOne({ customerId });
@@ -16,6 +16,7 @@ export const registerUser = async (req, res) => {
       clientSecret,
       customerId,
       serviceId,
+      storeID
     });
 
     res.status(201).json(user);

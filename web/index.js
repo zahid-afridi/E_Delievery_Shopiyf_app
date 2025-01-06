@@ -10,8 +10,8 @@ connectDB();
 import shopify from "./shopify.js";
 import productCreator from "./product-creator.js";
 import PrivacyWebhookHandlers from "./privacy.js";
-import router from "./Routes/userRoutes.js";
 import StoreModel from "./Models/Store.js";
+import AuthRoutes from "./Routes/userRoutes.js";
 
 const PORT = parseInt(
   process.env.BACKEND_PORT || process.env.PORT || "3000",
@@ -42,7 +42,7 @@ app.use(express.json());
 
 app.use("/api/*", shopify.validateAuthenticatedSession());
 
-app.use("/api", router);
+app.use("/api", AuthRoutes);
 
 app.get('/api/store/info', async (req, res) => {
   try {
