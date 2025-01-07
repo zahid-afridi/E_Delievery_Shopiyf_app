@@ -8,7 +8,9 @@ import {
   Text,
   Banner,
   useBuyerJourney,
+
   useApplyAttributeChange,
+  useApplyCartLinesChange
 } from "@shopify/ui-extensions-react/checkout";
 
 import { useTotalAmount } from "@shopify/ui-extensions-react/checkout";
@@ -22,6 +24,9 @@ function Extension() {
   const { amount } = useTotalAmount();
   const applyAttributeChange = useApplyAttributeChange();
   const buyerJourney = useBuyerJourney();
+  const applyCartChange=useApplyCartLinesChange()
+
+  console.log('cartline',applyCartChange)
 
   const [isEZDeliverySelected, setIsEZDeliverySelected] = useState(true);
   const [checked, setCheck] = useState({
@@ -114,7 +119,7 @@ function Extension() {
   return (
     <BlockStack spacing="loose">
       {loading && <Text>Loading... Please wait.</Text>} {/* Loader */}
-      x
+      
       {errorMessage && <Banner status="critical" title={errorMessage}></Banner>} {/* Error Banner */}
 
       <Checkbox

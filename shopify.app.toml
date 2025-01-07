@@ -1,15 +1,15 @@
 # Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
 
 client_id = "114ba644127ad3f4278c8e384c114827"
-application_url = "https://defendant-train-azerbaijan-scroll.trycloudflare.com"
+application_url = "https://wrapping-agreement-departmental-memo.trycloudflare.com"
 embedded = true
 name = "ez-delievry"
 handle = "ez-delievry"
 
 [build]
-include_config_on_deploy = true
-dev_store_url = "paymenttest-store.myshopify.com"
 automatically_update_urls_on_dev = true
+dev_store_url = "paymenttest-store.myshopify.com"
+include_config_on_deploy = true
 
 [webhooks]
 api_version = "2024-10"
@@ -20,9 +20,9 @@ scopes = "write_products"
 
 [auth]
 redirect_urls = [
-  "https://defendant-train-azerbaijan-scroll.trycloudflare.com/auth/callback",
-  "https://defendant-train-azerbaijan-scroll.trycloudflare.com/auth/shopify/callback",
-  "https://defendant-train-azerbaijan-scroll.trycloudflare.com/api/auth/callback"
+  "https://wrapping-agreement-departmental-memo.trycloudflare.com/auth/callback",
+  "https://wrapping-agreement-departmental-memo.trycloudflare.com/auth/shopify/callback",
+  "https://wrapping-agreement-departmental-memo.trycloudflare.com/api/auth/callback"
 ]
 
 [pos]
