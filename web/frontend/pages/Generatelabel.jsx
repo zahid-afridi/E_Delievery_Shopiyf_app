@@ -9,6 +9,7 @@ import {
 import Select from "react-select";
 import makeAnimated from "react-select/animated";
 import { BaseUrl, CustomerId, Token } from "../AuthToken/AuthToken";
+import { useSelector } from "react-redux";
 
 const animatedComponents = makeAnimated();
 
@@ -17,7 +18,8 @@ export default function GenerateLabel() {
   const [pdfUrl, setPdfUrl] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-
+const StoreDetail = useSelector((state) => state.store);
+  console.log('StoreDetail From Redux:', StoreDetail);
   // Mock options for the dropdown (replace with real options from API if needed)
   const orderOptions = [
     { value: "sHwKEzHAPoFas0K9bTtsc", label: "sHwKEzHAPoFas0K9bTtsc" },
@@ -44,11 +46,11 @@ export default function GenerateLabel() {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${Token}`,
+            Authorization: `Bearer ${StoreDetail.Token}`,
           },
           body: JSON.stringify({
             ids,
-            customerId: CustomerId,
+            customerId: StoreDetail.User.customerId,
           }),
         }
       );
