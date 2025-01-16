@@ -1,7 +1,7 @@
 let stripe; // Declare globally
 let cardNumber, cardExpiry, cardCvc; // Declare globally
 let totalAmount;
-
+let Cart_Data;
 window.addEventListener('DOMContentLoaded', () => {
     // Dynamically Load Stripe Script
     const loadStripeScript = (key) => {
@@ -131,6 +131,26 @@ const Token='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNrZ3BNWTBlSXdYY3NTb0
           }
     }
 //......................................EZ_DELIVERY API END ......................................................................//
+
+//###########################################SHOPIFY ORDER PLACE API START ######################################################
+  const Shopify_orederPlace=async()=>{
+    try {
+        const req=await fetch(`https://${Shopify.shop}/apps/proxy-8/shopify_order_place`,{
+            method:'POST',
+            headers:{
+                'Content-Type':'application/json'
+            },
+            body:JSON.stringify({
+                orderData:Cart_Data
+            })
+        })
+        const res=await req.json()
+        console.log('orderapi',res)
+    } catch (error) {
+        console.log('orderapierr',error)
+    }
+  }
+//###########################################SHOPIFY ORDER PLACE API END ######################################################
     // Handle Payment Submit
     const PaymentSubmit = async (event) => {
         event.preventDefault();
@@ -142,7 +162,7 @@ const Token='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNrZ3BNWTBlSXdYY3NTb0
         }
 
         try {
-            const response = await fetch(`https://paymenttest-store.myshopify.com/apps/proxy-8/create-payment-intent`, {
+            const response = await fetch(`https://${Shopify.shop}/apps/proxy-8/create-payment-intent`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -165,7 +185,8 @@ const Token='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNrZ3BNWTBlSXdYY3NTb0
                 console.log('Payment failed:', error);
                 alert(`Payment failed: ${error.message}`);
             } else if (paymentIntent.status === 'succeeded') {
-                await EZ_DELIVERY()
+                // await EZ_DELIVERY()
+                await Shopify_orederPlace()
                 alert("Payment successful!");
             }
         } catch (error) {
@@ -213,10 +234,11 @@ const Token='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNrZ3BNWTBlSXdYY3NTb0
 
             const data = await response.json();
             const subtotal = data.total_price / 100;
-
             updateUI.productList(data.items, productListContainer);
             updateUI.subtotal(subtotal, subtotalContainer);
             updateUI.totalPrice(subtotal, shippingCost, totalAmountContainer);
+            Cart_Data=data
+            
 
             return subtotal;
         } catch (error) {
@@ -290,4 +312,6 @@ const Token='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNrZ3BNWTBlSXdYY3NTb0
     observer.observe(document.body, { childList: true, subtree: true });
 
     console.log('Extension loaded');
+console.log('cartdataglobaly',Cart_Data)
+
 });

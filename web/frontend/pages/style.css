@@ -1,0 +1,92 @@
+
+body {
+    font-family: "Inter", sans-serif; 
+  }
+  
+  .card-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  .LegacyCard {
+    background: linear-gradient(135deg, #f9f9f9, #ffffff); 
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .LegacyCard:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  }
+  
+  .stripe-icon {
+    color: #6f42c1; 
+    font-size: 24px;
+    transition: color 0.3s ease;
+  }
+  
+  .stripe-icon:hover {
+    color: #5a2d91;
+  }
+  
+  .paypal-icon {
+    color: #1d4ed8;
+    font-size: 24px;
+    transition: color 0.3s ease;
+  }
+  
+  .paypal-icon:hover {
+    color: #153c9e; 
+  }
+  
+  .form-fade-in {
+    animation: fadeIn 0.5s ease-in-out;
+  }
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .save-button {
+    background: linear-gradient(135deg, #6f42c1, #1d4ed8); 
+    border: none;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .save-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(29, 78, 216, 0.3);
+  }
+  
+  
+  .back-arrow {
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 50%;
+    color:rgb(167, 175, 184);
+    transition: background-color 0.3s ease;
+  }
+  
+  .back-arrow:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+  }
+  
+  .page-title {
+    font-size: 24px;
+    font-weight: 600;
+    margin: 0;
+  }
