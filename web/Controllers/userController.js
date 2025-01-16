@@ -2,10 +2,10 @@ import User from "../Models/user.Model.js";
 
 export const registerUser = async (req, res) => {
   try {
-    const { clientId, clientSecret, customerId, serviceId, Store_Id } =
+    const { clientId, clientSecret, customerId, serviceId, Store_Id ,store_domain} =
       req.body;
 
-    if (!clientId || !clientSecret || !customerId || !serviceId || !Store_Id) {
+    if (!clientId || !clientSecret || !customerId || !serviceId || !Store_Id || !store_domain) {
       return res.status(400).json({
         status: 400,
         message: `${
@@ -19,6 +19,8 @@ export const registerUser = async (req, res) => {
             ? "serviceId"
             : !Store_Id
             ? "Store_Id"
+            : !store_domain
+            ? "store_domain"
             : ""
         } is required`,
       });
@@ -33,6 +35,7 @@ export const registerUser = async (req, res) => {
       customerId,
       serviceId,
       Store_Id,
+      store_domain
     });
 
     res.status(201).json({user, message: "User created successfully" });
