@@ -59,7 +59,7 @@ async function authenticateUser(req,res,next){
 
 
 app.use("/api", AuthRoutes);
-app.use("/api", PaymentRoutes);
+app.use('/api',PaymentRoutes)
 app.use("/customapi", StripeRoutes);
 app.get('/customapi',async(req,res)=>{
   console.log('api hit successfully')
@@ -107,9 +107,9 @@ app.get('/api/store/info', async (req, res) => {
 //...........................ORDER_PLACE_API...............................................
 app.post('/customapi/shopify_order_place', async (req, res) => {
   try {
-    const {orderData}=req.body
+    const {orderData,customerData}=req.body
     
-    console.log('checkBodyReq', orderData);
+    console.log('Customdata', customerData);
     // Get the shop from the query parameters
     const shop = req.query.shop;
 
@@ -136,37 +136,38 @@ app.post('/customapi/shopify_order_place', async (req, res) => {
 
     // Static shipping address
     order.shipping_address = {
-      first_name: "Test",
-      last_name: "User",
-      address1: "Karachi sadar bazar",
-      city: "Karachi",
-      province: "Sindh",
-      country: "PK",
-      zip: "74200",
+      first_name: customerData.firstName,
+      last_name: customerData.lastName,
+      address1: customerData.streetAddress,
+      city: customerData.city,
+      
+      country: customerData.country,
+
+      zip: customerData.postalCode,
     };
 
     // Static billing address
     order.billing_address = {
-      first_name: "Test",
-      last_name: "Billing",
-      address1: "123 Billing Street",
-      city: "Billing City",
-      province: "Sindh",
-      country: "PK",
-      zip: "74000",
+      first_name: customerData.firstName,
+      last_name: customerData.lastName,
+      address1: customerData.streetAddress,
+      city: customerData.city,
+      
+      country: customerData.country,
+      zip: customerData.postalCode,
     };
 
     // Static email
-    order.email = "test@example.com";
+    order.email = customerData.email;
 
     // Static note
     order.note = "This is a test order.";
 
     // Static customer (example - you might need to adjust this)
     order.customer = {
-      first_name: "Test",
-      last_name: "Customer",
-      email: "testcustomer@example.com",
+      first_name: customerData.firstName,
+      last_name: customerData.lastName,
+      email: customerData.email,
       //verified_email: true, // You might need to set this to true or false
       // You can add more customer details here if needed
       id: 6899567624476  // you can also add customer by id
