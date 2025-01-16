@@ -1,131 +1,293 @@
-window.addEventListener('DOMContentLoaded', () => {
-    console.log('extension loaded');
+let stripe; // Declare globally
+let cardNumber, cardExpiry, cardCvc; // Declare globally
+let totalAmount;
 
+window.addEventListener('DOMContentLoaded', () => {
+    // Dynamically Load Stripe Script
+    const loadStripeScript = (key) => {
+        return new Promise((resolve, reject) => {
+            const script = document.createElement("script");
+            script.src = "https://js.stripe.com/v3/";
+            script.onload = () => {
+                if (typeof Stripe === 'function') {
+                    resolve(Stripe(key));
+                } else {
+                    reject('Stripe function not available');
+                }
+            };
+            script.onerror = () => reject("Failed to load Stripe script");
+            document.head.appendChild(script);
+        });
+    };
+
+    // Initialize Stripe Elements
+    const initializeStripe = async () => {
+        try {
+            stripe = await loadStripeScript('pk_test_51QWwrrGRZ5NyJeXFDEkFxaLjznl6MGxJ3oxGGySgHyJfKUiMSZExjvxrNlKViSp62Li1jY3BBCo60oK1RM10OOZe00LocPOtDW');
+            
+            // Check if Stripe is found here
+            if (!stripe) {
+                console.error('Stripe is not loaded properly');
+                return;
+            }
+
+            const elements = stripe.elements();
+            cardNumber = elements.create('cardNumber');
+            cardExpiry = elements.create('cardExpiry');
+            cardCvc = elements.create('cardCvc');
+
+            console.log("Elements created:", { cardNumber, cardExpiry, cardCvc });
+
+            // Mounting Stripe Elements
+            cardNumber.mount('#card-number');
+            cardExpiry.mount('#card-expiry');
+            cardCvc.mount('#card-cvc');
+        } catch (error) {
+            console.error("Error initializing Stripe:", error);
+        }
+    };
+
+    // Call Stripe initialization on page load
+    initializeStripe();
+//......................................EZ_DELIVERY API ......................................................................//
+const Token='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNrZ3BNWTBlSXdYY3NTb0pKeDA5aCIsInNvdXJjZSI6ImJ1c2luZXNzIiwiaWF0IjoxNzM2OTMzNzc3LCJleHAiOjE3MzY5MzczNzd9.PN4UlaXxmafiygGtMcwYDVGD52qC3clpPskC7OkLnM0'
+    const EZ_DELIVERY=async()=>{
+        const orderData = {
+            customerId: "ckgpMY0eIwXcsSoJJx09h",
+            pickup: {
+                address: "postman order",
+                addressDetail: "",
+                completeAfter: 0,
+                completeBefore: 0,
+                coordinates: [-0.15869881563038823, 51.51268479847148],
+                fullName: "Test order form postamn",
+                phone: "611522",
+                email: "abcd@pickup.org",
+                placeId: ""
+            },
+            delivery: {
+                address: "62 Albemarle St, London W1S 4BD, UK",
+                addressDetail: "block A2",
+                completeAfter: 0,
+                completeBefore: 0,
+                coordinates: [-0.1405885408344662, 51.50785039521855],
+                fullName: "mosi pann",
+                phone: "1154123",
+                email: "abcd@delivery.org",
+                placeId: ""
+            },
+            service: {
+                id: "1Vr4gyMBELnYNyXIpyYHE",
+                options: [
+                    {
+                        id: "1Vr4gyMBELnYNyXIpyYHE",
+                        dataId: "QQNWe9WRid2y0mOA0bmt_"
+                    },
+                    {
+                        id: "JlI_Ez5wyNuXMHq4FCm_m",
+                        inputValue: "20 lbs"
+                    },
+                    {
+                        id: "ElGWocOJaKXTcjW782jbr",
+                        dataId: ""
+                    }
+                ]
+            },
+            paymentMethod: "Cash",
+            paymentSide: "Sender",
+            draft: false,
+            codAmount: 0,
+       
+            note: "note",
+            
+        };
+        
+        
+
+          try {
+            const response = await fetch(
+              "https://wrmx.manage.onro.app/api/v1/customer/order/pickup-delivery",
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: `Bearer ${Token}`,
+                },
+                body: JSON.stringify(orderData),
+              }
+            );
+
+            const result = await response.json();
+
+            if (response.ok) {
+              console.log("Order placed successfully:", result);
+              
+            } else {
+              throw new Error(result.message || "Failed to place order.");
+            }
+          } catch (error) {
+            console.error("Order API error:", error);
+            
+          }
+    }
+//......................................EZ_DELIVERY API END ......................................................................//
+    // Handle Payment Submit
+    const PaymentSubmit = async (event) => {
+        event.preventDefault();
+
+        // Ensure Stripe and Elements are initialized
+        if (!stripe || !cardNumber) {
+            console.error("Stripe or card number not initialized yet.");
+            return;
+        }
+
+        try {
+            const response = await fetch(`https://paymenttest-store.myshopify.com/apps/proxy-8/create-payment-intent`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    amount:Math.floor(totalAmount) * 100, // Set the amount here
+                }),
+            });
+
+            const { clientSecret } = await response.json();
+
+            // Confirm the payment with Stripe
+            const { error, paymentIntent } = await stripe.confirmCardPayment(clientSecret, {
+                payment_method: {
+                    card: cardNumber, // Use the card number element
+                },
+            });
+
+            if (error) {
+                console.log('Payment failed:', error);
+                alert(`Payment failed: ${error.message}`);
+            } else if (paymentIntent.status === 'succeeded') {
+                await EZ_DELIVERY()
+                alert("Payment successful!");
+            }
+        } catch (error) {
+            console.error('Product API error:', error);
+        }
+    };
+
+    // Attach the PaymentSubmit to the form
+    const SubmitForm = document.getElementById('SubmitForm');
+    SubmitForm.addEventListener('submit', PaymentSubmit);
+
+    // Dynamically populate UI and handle cart data (existing code for updating UI)
+    const updateUI = {
+        productList: (items, container) => {
+            container.innerHTML = '';
+            items.forEach((item) => {
+                const productDiv = document.createElement('div');
+                productDiv.classList.add('product');
+                productDiv.innerHTML = `
+                    <img src="${item.image}" alt="${item.title}">
+                    <div>
+                        <p>${item.title}</p>
+                        <p>Quantity: ${item.quantity}</p>
+                        <span>Rs ${(item.final_line_price / 100).toFixed(2)}</span>
+                    </div>
+                `;
+                container.appendChild(productDiv);
+            });
+        },
+        subtotal: (subtotal, container) => {
+            container.textContent = `Rs ${subtotal.toFixed(2)}`;
+        },
+        totalPrice: (subtotal, shippingCost, container) => {
+            const total = subtotal + shippingCost;
+            container.textContent = `Rs ${total.toFixed(2)}`;
+            totalAmount = total;
+        },
+    };
+
+    // Fetch Cart Data
+    const fetchCartData = async (productListContainer, subtotalContainer, totalAmountContainer, shippingCost) => {
+        try {
+            const response = await fetch('/cart.js');
+            if (!response.ok) throw new Error('Failed to fetch cart data');
+
+            const data = await response.json();
+            const subtotal = data.total_price / 100;
+
+            updateUI.productList(data.items, productListContainer);
+            updateUI.subtotal(subtotal, subtotalContainer);
+            updateUI.totalPrice(subtotal, shippingCost, totalAmountContainer);
+
+            return subtotal;
+        } catch (error) {
+            console.error('Cart API error:', error);
+        }
+    };
+
+    // Modal Toggle and Event Listeners
     const modal = document.getElementById("checkoutModal");
     const closeBtn = document.querySelector(".close-button");
     const TotalAmount = document.getElementById('Checkout_Total_Amount');
     const subtotalAmount = document.getElementById('subtotalAmount');
     const shippingCostElement = document.getElementById('shippingCost');
     const productList = document.getElementById('productList');
-    const shippingSelect = document.getElementById('shippingMethod'); // Shipping method dropdown
-    const SubmitForm=document.getElementById('SubmitForm')
-
-    let cartTotal = 0; // Base cart total
-    let selectedShippingCost = 0; // Selected shipping cost
-
-    // Close modal function
-    closeBtn.onclick = () => modal.style.display = "none";
-
-    // Fetch cart data from the API
-    const CartData = async () => {
-        try {
-            const response = await fetch('/cart.js');
-            const data = await response.json();
-            console.log('cartapi', data);
-
-            if (response.ok) {
-                cartTotal = data.total_price / 100; // Base cart total
-                updateProductList(data.items); // Update product list in the modal
-                updateSubtotal(); // Update subtotal
-            }
-        } catch (error) {
-            console.error('cart api error', error);
-        }
-    };
-
-    // Update product list
-    const updateProductList = (items) => {
-        productList.innerHTML = ''; // Clear existing items
-        items.forEach(item => {
-            const productDiv = document.createElement('div');
-            productDiv.classList.add('product');
-
-            productDiv.innerHTML = `
-                <img src="${item.image}" alt="${item.title}">
-                <div>
-                    <p>${item.title}</p>
-                    <p>Quantity: ${item.quantity}</p>
-                    <span>Rs ${(item.final_line_price / 100).toFixed(2)}</span>
-                </div>
-            `;
-
-            productList.appendChild(productDiv);
-        });
-    };
-
-    // Update subtotal
-    const updateSubtotal = () => {
-        subtotalAmount.textContent = `Rs ${cartTotal.toFixed(2)}`;
-        updateTotalPrice(); // Update total price
-    };
-
-    // Update total price
-    const updateTotalPrice = () => {
-        const totalPrice = cartTotal + selectedShippingCost;
-        TotalAmount.textContent = `Rs ${totalPrice.toFixed(2)}`;
-    };
-
-    // Event listener for shipping method selection
-    shippingSelect.addEventListener('change', (event) => {
-        selectedShippingCost = parseFloat(event.target.value) || 0;
-        shippingCostElement.textContent = `Rs ${selectedShippingCost.toFixed(2)}`;
-        updateTotalPrice(); // Update total price
-    });
-
-    // Show modal function
-    const showModal = (event) => {
-        event.preventDefault();
-        CartData();
-        modal.style.display = "block";
-    };
-
-    // Attach event listeners to checkout buttons
-    const attachClickListener = (button) => {
-        if (button) {
-            button.addEventListener('click', showModal);
-        }
-    };
-
-    // Target all buttons with the class `cart__checkout-button`
+    const shippingSelect = document.getElementById('shippingMethod');
     const checkoutButtons = document.querySelectorAll('.cart__checkout-button');
-    checkoutButtons.forEach(attachClickListener);
+    const NextDayDate=document.getElementById('hideInput');
 
-    // Optional: MutationObserver to handle dynamically loaded buttons
-    const observer = new MutationObserver((mutations) => {
-        mutations.forEach(() => {
-            const updatedButton = document.getElementById('CartDrawer-Checkout');
-            if (updatedButton) {
-                attachClickListener(updatedButton);
-            }
+
+    const currentTime = new Date();
+    const currentHour = currentTime.getHours();
+
+    const sameDayDeliveryOption = document.getElementById("Same_day_delivery");
+
+    if (sameDayDeliveryOption) {
+        if (currentHour >= 13) {
+            // After 1 PM, hide the option
+            sameDayDeliveryOption.style.display = "none";
+        } else {
+            // Before 1 PM (new day starting at midnight), show the option
+            sameDayDeliveryOption.style.display = "block"; // Ensure it's visible
+        }
+    }
+    const toggleModal = (modal, show) => {
+        modal.style.display = show ? 'block' : 'none';
+    };
+
+    // Attach Event Listeners Dynamically for Checkout Buttons
+    const attachEventListeners = (buttons, modal, productListContainer, subtotalContainer, totalAmountContainer, shippingSelect, shippingCostElement) => {
+        buttons.forEach((button) => {
+            button.addEventListener('click', async (event) => {
+                event.preventDefault();
+                const subtotal = await fetchCartData(productListContainer, subtotalContainer, totalAmountContainer, parseFloat(shippingSelect.value || 0));
+                toggleModal(modal, true);
+
+                shippingSelect.addEventListener('change', (event) => {
+                    const selectedShippingCost = parseFloat(event.target.value) || 0;
+                    shippingCostElement.textContent = `Rs ${selectedShippingCost.toFixed(2)}`;
+                    updateUI.totalPrice(subtotal, selectedShippingCost, totalAmountContainer);
+                    if (event.target.value ==='18.5') {
+                        console.log('next day slected')
+                        NextDayDate.classList.remove('hideNextDay_Date_Input')
+                    }else{
+                        console.log('not slected')
+                        NextDayDate.classList.add('hideNextDay_Date_Input')
+                    }
+                });
+            });
         });
+    };
+
+    // Attach Event Listeners
+    attachEventListeners(checkoutButtons, modal, productList, subtotalAmount, TotalAmount, shippingSelect, shippingCostElement);
+
+    // Observe DOM for Dynamically Added Buttons
+    const observer = new MutationObserver(() => {
+        const updatedButtons = document.querySelectorAll('.cart__checkout-button');
+        attachEventListeners(updatedButtons, modal, productList, subtotalAmount, TotalAmount, shippingSelect, shippingCostElement);
     });
 
     observer.observe(document.body, { childList: true, subtree: true });
 
-
-
-
-// handleSubmit function start 
-const handleSumbit = async (e) => {
-    e.preventDefault(); // Prevent default form submission
-    alert('hello');
-};
-
-SubmitForm.addEventListener('submit', handleSumbit);
-
-// handleSubmit function end
-
-
-
-
-
-
-
-
-
-
+    console.log('Extension loaded');
 });
-
-
-
-

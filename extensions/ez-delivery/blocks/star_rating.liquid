@@ -1,89 +1,99 @@
 <div id="checkoutModal" class="modal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h2>Payment Test Store</h2>
-            <span class="close-button">&times;</span>
-        </div>
-        <div class="modal-body">
-            <form  id="SubmitForm">
-                <section>
-                    <h3>Contact Information</h3>
-                    <input type="tel" placeholder="Phone number" value="">
-                </section>
-
-                <section>
-                    <h3>Delivery Information</h3>
-                    <div class="input-group">
-                        <input type="text" placeholder="First Name">
-                        <input type="text" placeholder="Last Name">
-                    </div>
-                    <div class="input-group">
-                        <select>
-                            <option value="Pakistan">Pakistan</option>
-                        </select>
-                        <input type="text" placeholder="City" value="Karachi">
-                    </div>
-                    <input placeholder="Street Address, Karachi (Optional)" rows="3">
-                    <input type="text" placeholder="Postal Code" value="74200">
-                </section>
-
-                <section>
-                    <h3>Shipping Method</h3>
-                    <div class="input-group">
-                        <select id="shippingMethod">
-                            <option value="0">Select Shipping Method</option>
-                            <option value="23.5">Same Day Delivery - $23.5</option>
-                            <option value="18.5">Next Day Delivery - $18.5</option>
-                            <option value="85.0">Top Priority Delivery - $85.0</option>
-                        </select>
-                    </div>
-                </section>
-
-                <section>
-                    <h3>Payment Method</h3>
-                    <div class="input-group">
-                        <input type="text" placeholder="Card Number (e.g., 4242 4242 4242 4242)">
-                        <input type="text" placeholder="Expiration Date (MM/YY)">
-                        <input type="text" placeholder="CVC (3 digits)">
-                    </div>
-                    <button type="submit" class="pay-button">Pay Now</button>
-                </section>
-            </form>
-
-            <div class="order-summary">
-                <h3>Order Summary</h3>
-                <div id="productList">
-                    <!-- Product details will be dynamically added here -->
-                </div>
-                <div class="summary-line">
-                    <span>Subtotal</span>
-                    <span id="subtotalAmount">Rs 0.00</span>
-                </div>
-                <div class="summary-line">
-                    <span>Shipping</span>
-                    <span id="shippingCost">Rs 0.00</span>
-                </div>
-                <div class="summary-line total">
-                    <span>Total</span>
-                    <span id="Checkout_Total_Amount">Rs 0.00</span>
-                </div>
-            </div>
-        </div>
-        <div class="modal-footer">
-            <p>Secure Payment</p>
-        </div>
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>Payment Test Store</h2>
+      <span class="close-button">&times;</span>
     </div>
-</div>
+    <div class="modal-body">
+      <form id="SubmitForm">
+        <section>
+          <h3>Contact Information</h3>
+          <input type="tel" placeholder="Phone number" value="">
+        </section>
 
-  
+        <section>
+          <h3>Delivery Information</h3>
+          <div class="input-group">
+            <input type="text" placeholder="First Name">
+            <input type="text" placeholder="Last Name">
+          </div>
+          <div class="input-group">
+            <select>
+              <option value="Pakistan">Pakistan</option>
+            </select>
+            <input type="text" placeholder="City" value="Karachi">
+          </div>
+          <input placeholder="Street Address, Karachi (Optional)" rows="3">
+          <input type="text" placeholder="Postal Code" value="74200">
+        </section>
+
+        <section>
+          <h3>Shipping Method</h3>
+          <div class="input-group">
+            <select id="shippingMethod">
+              <option value="0">Select Shipping Method</option>
+              <option value="23.5" id="Same_day_delivery">Same Day Delivery - $23.5</option>
+              <option value="18.5">Next Day Delivery - $18.5 (Cut off will be at 5pm)</option>
+              <option value="85.0">Top Priority Delivery - $85.0</option>
+            </select>
+          </div>
+          <div class="input-group hideNextDay_Date_Input " id="hideInput">
+            <input type="date">
+          <input type="time">
+          </div>
+          
+        </section>
+
+        <section>
+          <h3>Payment Method</h3>
+          <div class="input-group">
+            {% comment %}
+              <input type="text" placeholder="Card Number (e.g., 4242 4242 4242 4242)">
+
+              <input type="text" placeholder="Expiration Date (MM/YY)">
+              <input type="text" placeholder="CVC (3 digits)">
+            {% endcomment %}
+            <div id="card-number"></div>
+            <div id="card-expiry"></div>
+            <div id="card-cvc"></div>
+          </div>
+          <button type="submit" class="pay-button">Pay Now</button>
+        </section>
+      </form>
+      <div style="position: fixed;top: 80px;right: 30px;width: 30%;overflow: hidden;">
+        <div class="order-summary">
+          <h3>Order Summary</h3>
+          <div id="productList">
+            <!-- Product details will be dynamically added here -->
+          </div>
+        </div>
+        <div class="order-pricing">
+          <div class="summary-line">
+            <span>Subtotal</span>
+            <span id="subtotalAmount">Rs 0.00</span>
+          </div>
+          <div class="summary-line">
+            <span>Shipping</span>
+            <span id="shippingCost">Rs 0.00</span>
+          </div>
+          <div class="summary-line total">
+            <span>Total</span>
+            <span id="Checkout_Total_Amount">Rs 0.00</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <p>Secure Payment</p>
+    </div>
+  </div>
+</div>
 
 {% schema %}
 {
   "name": "Ez-Delivery",
   "target": "body",
   "stylesheet": "style.css",
-  "javascript": "index.js",
-
+  "javascript": "index.js"
 }
 {% endschema %}
-

@@ -14,6 +14,7 @@ import AuthRoutes from "./Routes/userRoutes.js";
 import StoreModel from "./Models/Store.js";
 
 import User from "./Models/user.Model.js";
+import StripeRoutes from "./Routes/Stripe.js";
 
 const PORT = parseInt(
   process.env.BACKEND_PORT || process.env.PORT || "3000",
@@ -43,9 +44,25 @@ app.use(express.json());
 // also add a proxy rule for them in web/frontend/vite.config.js
 
 app.use("/api/*", shopify.validateAuthenticatedSession());
+app.use("/customapi/*", authenticateUser);
+async function authenticateUser(req,res,next){
+  let shop=req.query.shop
+  let storeName= await shopify.config.sessionStorage.findSessionsByShop(shop)
+  console.log('storename for view',storeName)
+  if (shop === storeName[0].shop) {
+    next()
+  }else{
+    res.send('user not authersiozed')
+  }
+}
+
 
 app.use("/api", AuthRoutes);
-
+app.use("/customapi", StripeRoutes);
+app.get('/customapi',async(req,res)=>{
+  console.log('api hit successfully')
+  res.send('hello')
+})
 app.get('/api/store/info', async (req, res) => {
   try {
     const Store = await shopify.api.rest.Shop.all({
