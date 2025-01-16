@@ -3,6 +3,32 @@ let cardNumber, cardExpiry, cardCvc; // Declare globally
 let totalAmount;
 let Cart_Data;
 window.addEventListener('DOMContentLoaded', () => {
+
+    // customer data here 
+    const getFormData = () => {
+        const phoneNumber = document.getElementById("Phone_Number").value;
+        const email = document.getElementById("customerEmail").value;
+        const firstName = document.getElementById("firstName").value;
+        const lastName = document.getElementById("lastName").value;
+        const country = document.getElementById("country").value;
+        const city = document.getElementById("city").value;
+        const streetAddress = document.getElementById("streetAddress").value;
+        const postalCode = document.getElementById("postalCode").value;
+        const shippingMethod = document.getElementById("shippingMethod").value
+      
+        return {
+          phoneNumber,
+          email,
+          firstName,
+          lastName,
+          country,
+          city,
+          streetAddress,
+          postalCode,
+          shippingMethod
+        };
+      };
+    // customer data here end
     // Dynamically Load Stripe Script
     const loadStripeScript = (key) => {
         return new Promise((resolve, reject) => {
@@ -50,30 +76,32 @@ window.addEventListener('DOMContentLoaded', () => {
     // Call Stripe initialization on page load
     initializeStripe();
 //......................................EZ_DELIVERY API ......................................................................//
-const Token='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNrZ3BNWTBlSXdYY3NTb0pKeDA5aCIsInNvdXJjZSI6ImJ1c2luZXNzIiwiaWF0IjoxNzM2OTMzNzc3LCJleHAiOjE3MzY5MzczNzd9.PN4UlaXxmafiygGtMcwYDVGD52qC3clpPskC7OkLnM0'
+const Token='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNrZ3BNWTBlSXdYY3NTb0pKeDA5aCIsInNvdXJjZSI6ImJ1c2luZXNzIiwiaWF0IjoxNzM3MDI3MzYzLCJleHAiOjE3MzcwMzA5NjN9.jrO8pZh4TzgD0aORcBjRTyYKPpV8VhwpJxiX_1ag2K4'
     const EZ_DELIVERY=async()=>{
         const orderData = {
             customerId: "ckgpMY0eIwXcsSoJJx09h",
             pickup: {
-                address: "postman order",
+                address: getFormData().streetAddress,
+
                 addressDetail: "",
                 completeAfter: 0,
                 completeBefore: 0,
                 coordinates: [-0.15869881563038823, 51.51268479847148],
-                fullName: "Test order form postamn",
-                phone: "611522",
-                email: "abcd@pickup.org",
+                fullName: getFormData().firstName +getFormData().lastName,
+                phone: getFormData().phoneNumber,
+                email: getFormData().email,
                 placeId: ""
             },
             delivery: {
-                address: "62 Albemarle St, London W1S 4BD, UK",
+                address: getFormData().streetAddress,
                 addressDetail: "block A2",
                 completeAfter: 0,
                 completeBefore: 0,
                 coordinates: [-0.1405885408344662, 51.50785039521855],
-                fullName: "mosi pann",
-                phone: "1154123",
-                email: "abcd@delivery.org",
+                fullName: getFormData().firstName +getFormData().lastName,
+
+                phone: getFormData().phoneNumber,
+                email: getFormData().email,
                 placeId: ""
             },
             service: {
@@ -135,13 +163,15 @@ const Token='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNrZ3BNWTBlSXdYY3NTb0
 //###########################################SHOPIFY ORDER PLACE API START ######################################################
   const Shopify_orederPlace=async()=>{
     try {
+        console.log('cartdata',Cart_Data)
         const req=await fetch(`https://${Shopify.shop}/apps/proxy-8/shopify_order_place`,{
             method:'POST',
             headers:{
                 'Content-Type':'application/json'
             },
             body:JSON.stringify({
-                orderData:Cart_Data
+                orderData:Cart_Data,
+                customerData:getFormData()
             })
         })
         const res=await req.json()
@@ -154,7 +184,7 @@ const Token='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNrZ3BNWTBlSXdYY3NTb0
     // Handle Payment Submit
     const PaymentSubmit = async (event) => {
         event.preventDefault();
-
+         console.log('formdata',getFormData())
         // Ensure Stripe and Elements are initialized
         if (!stripe || !cardNumber) {
             console.error("Stripe or card number not initialized yet.");
@@ -185,7 +215,7 @@ const Token='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNrZ3BNWTBlSXdYY3NTb0
                 console.log('Payment failed:', error);
                 alert(`Payment failed: ${error.message}`);
             } else if (paymentIntent.status === 'succeeded') {
-                // await EZ_DELIVERY()
+                await EZ_DELIVERY()
                 await Shopify_orederPlace()
                 alert("Payment successful!");
             }
