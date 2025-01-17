@@ -15,6 +15,7 @@ import { ArrowLeftMinor } from "@shopify/polaris-icons";
 import { useNavigate } from "react-router-dom";
 import "./style.css"; // Import the CSS file
 import { useSelector } from "react-redux";
+import LoginForm from "../components/LoginForm.jsx";
 
 export default function Settings() {
   const [selectedGateway, setSelectedGateway] = useState("");
@@ -196,6 +197,12 @@ export default function Settings() {
               </Button>
             </Box>
           </VerticalStack>
+        </LegacyCard>
+
+      </div>
+      <div>
+        <LegacyCard>
+        <LoginForm />
         </LegacyCard>
       </div>
     </Page>
