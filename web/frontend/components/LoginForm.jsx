@@ -29,6 +29,7 @@ export default function LoginForm({ setRefresh }) {
       serviceId,
 
       Store_Id: StoreDetail && StoreDetail.Store_Id,
+      store_domain: StoreDetail && StoreDetail.domain,
     };
 
     // Perform form submission logic here

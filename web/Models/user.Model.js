@@ -8,7 +8,11 @@ const userSchema = new mongoose.Schema({
   Store_Id:{
     type:String,
     required:true
-}
+},
+store_domain: {
+  type: String,
+  required: true,
+},
   
 });
 

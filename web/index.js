@@ -16,6 +16,7 @@ import StoreModel from "./Models/Store.js";
 import User from "./Models/user.Model.js";
 import StripeRoutes from "./Routes/Stripe.js";
 import PaymentRoutes from "./Routes/PaymentRoute.js";
+import Payment from "./Models/Payment.js";
 
 const PORT = parseInt(
   process.env.BACKEND_PORT || process.env.PORT || "3000",
@@ -46,78 +47,135 @@ app.use(express.json());
 
 app.use("/api/*", shopify.validateAuthenticatedSession());
 app.use("/customapi/*", authenticateUser);
-async function authenticateUser(req,res,next){
-  let shop=req.query.shop
-  let storeName= await shopify.config.sessionStorage.findSessionsByShop(shop)
-  console.log('storename for view',storeName)
+async function authenticateUser(req, res, next) {
+  let shop = req.query.shop;
+  let storeName = await shopify.config.sessionStorage.findSessionsByShop(shop);
+  console.log("storename for view", storeName);
   if (shop === storeName[0].shop) {
-    next()
-  }else{
-    res.send('user not authersiozed')
+    next();
+  } else {
+    res.send("user not authersiozed");
   }
 }
 
-
 app.use("/api", AuthRoutes);
-app.use('/api',PaymentRoutes)
+app.use("/api", PaymentRoutes);
 app.use("/customapi", StripeRoutes);
-app.get('/customapi',async(req,res)=>{
-  console.log('api hit successfully')
-  res.send('hello')
-})
-app.get('/api/store/info', async (req, res) => {
+app.get("/customapi", async (req, res) => {
+  console.log("api hit successfully");
+  res.send("hello");
+});
+app.get("/api/store/info", async (req, res) => {
   try {
     const Store = await shopify.api.rest.Shop.all({
       session: res.locals.shopify.session,
     });
     // console.log("Storename",Store.data[0].domain)
-      // console.log('Store Information',Store)
+    // console.log('Store Information',Store)
     if (Store && Store.data && Store.data.length > 0) {
       const storeName = Store.data[0].name;
       const domain = Store.data[0].domain;
-      const country=Store.data[0].country;
-      const Store_Id=Store.data[0].id
-     
+      const country = Store.data[0].country;
+      const Store_Id = Store.data[0].id;
 
       // Check if storeName exists in the database
       const existingStore = await StoreModel.findOne({ storeName });
       const ExistUser = await User.findOne({ Store_Id });
-    
+
       if (!existingStore) {
         // If it doesn't exist, save it
-        const newStore = new StoreModel({ storeName,domain,country,Store_Id });
+        const newStore = new StoreModel({
+          storeName,
+          domain,
+          country,
+          Store_Id,
+        });
         await newStore.save();
-    
-      
       }
 
       // Send response with existingStore only
-      res.status(200).json({StoreDetail:{
-          Store:existingStore,
-          User:ExistUser
-      },User:ExistUser ? true : false}); // Send existingStore directly in the response
+      res.status(200).json({
+        StoreDetail: {
+          Store: existingStore,
+          User: ExistUser,
+        },
+        User: ExistUser ? true : false,
+      }); // Send existingStore directly in the response
     } else {
-      res.status(404).json({ message: 'Store not found' });
+      res.status(404).json({ message: "Store not found" });
     }
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Internal server Error" });
   }
 });
-//...........................ORDER_PLACE_API...............................................
-app.post('/customapi/shopify_order_place', async (req, res) => {
+
+//...........................PAYMENT_GET_API...............................................
+
+app.get("/customapi/shopify_payment", async (req, res) => {
   try {
-    const {orderData,customerData}=req.body
-    
-    console.log('Customdata', customerData);
+    const { store_domain } = req.query;
+
+    // Validate store_Id
+    if (!store_domain) {
+      return res.status(400).json({
+        status: 400,
+        message: "store_domain is required",
+      });
+    }
+
+    // Fetch payment and user details
+    const payment = await Payment.findOne({ store_domain });
+    const user = await User.findOne({ store_domain });
+
+    // Check if both payment and user exist
+    if (!payment || !user) {
+      return res.status(404).json({
+        status: 404,
+        message: "Payment or User not found",
+      });
+    }
+
+    // Return success response with payment and user details
+    return res.status(200).json({
+      status: 200,
+      message: "Payment and User details fetched successfully",
+      data: {
+        payment,
+        user,
+      },
+    });
+  } catch (error) {
+    console.error("Error getting payment:", error);
+    return res.status(500).json({
+      status: 500,
+      message: "Internal Server Error",
+      error: error.message,
+    });
+  }
+});
+
+//...........................PAYMENT_GET_API...............................................
+
+//...........................ORDER_PLACE_API...............................................
+app.post("/customapi/shopify_order_place", async (req, res) => {
+  try {
+    const { orderData, customerData } = req.body;
+
+    console.log("Customdata", customerData);
     // Get the shop from the query parameters
     const shop = req.query.shop;
 
     // Find the session for the shop
-    const session = await shopify.config.sessionStorage.findSessionsByShop(shop);
+    const session = await shopify.config.sessionStorage.findSessionsByShop(
+      shop
+    );
 
     if (!session || session.length === 0) {
-      return res.status(401).send({ success: false, message: 'Unauthorized: Shop session not found.' });
+      return res.status(401).send({
+        success: false,
+        message: "Unauthorized: Shop session not found.",
+      });
     }
 
     // Assuming you want to use the first session found
@@ -125,13 +183,13 @@ app.post('/customapi/shopify_order_place', async (req, res) => {
 
     // Create a new order object
     const order = new shopify.api.rest.Order({ session: shopSession });
-    order.line_items = orderData.items.map(item => ({
-        variant_id: item.variant_id,
-        quantity: item.quantity,
-        price: item.final_price,
-        tax_lines: [] // Add tax lines if applicable
+    order.line_items = orderData.items.map((item) => ({
+      variant_id: item.variant_id,
+      quantity: item.quantity,
+      price: item.final_price,
+      tax_lines: [], // Add tax lines if applicable
     }));
-    order.currency = orderData.currency; 
+    order.currency = orderData.currency;
     order.total_price = orderData.total_price;
 
     // Static shipping address
@@ -140,7 +198,7 @@ app.post('/customapi/shopify_order_place', async (req, res) => {
       last_name: customerData.lastName,
       address1: customerData.streetAddress,
       city: customerData.city,
-      
+
       country: customerData.country,
 
       zip: customerData.postalCode,
@@ -152,7 +210,7 @@ app.post('/customapi/shopify_order_place', async (req, res) => {
       last_name: customerData.lastName,
       address1: customerData.streetAddress,
       city: customerData.city,
-      
+
       country: customerData.country,
       zip: customerData.postalCode,
     };
@@ -170,17 +228,25 @@ app.post('/customapi/shopify_order_place', async (req, res) => {
       email: customerData.email,
       //verified_email: true, // You might need to set this to true or false
       // You can add more customer details here if needed
-      id: 6899567624476  // you can also add customer by id
+      id: 6899567624476, // you can also add customer by id
     };
 
     await order.save({
       update: true,
     });
-    console.log('Order placed successfully:', order.id);
-    res.status(200).send({ success: true, message: 'Order placed successfully', orderId: order.id });
+    console.log("Order placed successfully:", order.id);
+    res.status(200).send({
+      success: true,
+      message: "Order placed successfully",
+      orderId: order.id,
+    });
   } catch (error) {
-    console.error('Error placing order:', error);
-    res.status(500).send({ success: false, message: 'Failed to place order', error: error.message });
+    console.error("Error placing order:", error);
+    res.status(500).send({
+      success: false,
+      message: "Failed to place order",
+      error: error.message,
+    });
   }
 });
 //...........................ORDER_PLACE_API END...............................................
