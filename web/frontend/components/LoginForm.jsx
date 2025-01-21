@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   AppProvider,
   Page,
@@ -65,6 +65,33 @@ export default function LoginForm({ setRefresh }) {
     console.log("Form submitted:", formData);
     // Add further form submission logic here
   };
+
+  const getPayment = async () => {
+    try {
+      const response = await fetch("/api/get-user", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      const data = await response.json();
+      console.log("getdata",data);
+      if (response.ok) {
+        setClientId(data.clientId);
+        setClientSecret(data.clientSecret);
+        setCustomerId(data.customerId);
+        setServiceId(data.serviceId);
+      }
+    } catch (error) {
+      console.error("Error creating payment:", error);
+    }
+  };
+
+  useEffect(() => {
+    getPayment();
+  }, []);
+
   return (
     <AppProvider>
       <Page title="Signup Form">

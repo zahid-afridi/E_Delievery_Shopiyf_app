@@ -15,6 +15,7 @@ import { ArrowLeftMinor } from "@shopify/polaris-icons";
 import { useNavigate } from "react-router-dom";
 import "./style.css"; // Import the CSS file
 import { useSelector } from "react-redux";
+import LoginForm from "../components/LoginForm.jsx";
 
 export default function Settings() {
   const [selectedGateway, setSelectedGateway] = useState("");
@@ -144,47 +145,47 @@ export default function Settings() {
               onChange={handleGatewayChange}
             />
 
-            {selectedGateway === "stripe" && (
-              <div className="form-fade-in">
-                <VerticalStack gap="4">
-                  <TextField
-                    label="Secret Key"
-                    type="password"
-                    value={stripeSecretKey}
-                    onChange={(value) => setStripeSecretKey(value)}
-                    autoComplete="off"
-                  />
-                  <TextField
-                    label="Publishable Key"
-                    type="password"
-                    value={stripePublishableKey}
-                    onChange={(value) => setStripePublishableKey(value)}
-                    autoComplete="off"
-                  />
-                </VerticalStack>
-              </div>
-            )}
+              {selectedGateway === "stripe" && (
+                <div className="form-fade-in">
+                  <VerticalStack gap="4">
+                    <TextField
+                      label="Secret Key"
+                      type="password"
+                      value={stripeSecretKey}
+                      onChange={(value) => setStripeSecretKey(value)}
+                      autoComplete="off"
+                    />
+                    <TextField
+                      label="Publishable Key"
+                      type="password"
+                      value={stripePublishableKey}
+                      onChange={(value) => setStripePublishableKey(value)}
+                      autoComplete="off"
+                    />
+                  </VerticalStack>
+                </div>
+              )}
 
-            {selectedGateway === "paypal" && (
-              <div className="form-fade-in">
-                <VerticalStack gap="4">
-                  <TextField
-                    label="Client ID"
-                    type="password"
-                    value={paypalClientId}
-                    onChange={(value) => setPaypalClientId(value)}
-                    autoComplete="off"
-                  />
-                  <TextField
-                    label="Client Secret"
-                    type="password"
-                    value={paypalClientSecret}
-                    onChange={(value) => setPaypalClientSecret(value)}
-                    autoComplete="off"
-                  />
-                </VerticalStack>
-              </div>
-            )}
+              {selectedGateway === "paypal" && (
+                <div className="form-fade-in">
+                  <VerticalStack gap="4">
+                    <TextField
+                      label="Client ID"
+                      type="password"
+                      value={paypalClientId}
+                      onChange={(value) => setPaypalClientId(value)}
+                      autoComplete="off"
+                    />
+                    <TextField
+                      label="Client Secret"
+                      type="password"
+                      value={paypalClientSecret}
+                      onChange={(value) => setPaypalClientSecret(value)}
+                      autoComplete="off"
+                    />
+                  </VerticalStack>
+                </div>
+              )}
 
             <Box paddingBlockStart="4">
               <Button
@@ -196,6 +197,12 @@ export default function Settings() {
               </Button>
             </Box>
           </VerticalStack>
+        </LegacyCard>
+
+      </div>
+      <div>
+        <LegacyCard>
+        <LoginForm />
         </LegacyCard>
       </div>
     </Page>
