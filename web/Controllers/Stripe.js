@@ -20,10 +20,10 @@
 import stripe from 'stripe'
 
 // Initialize stripe with the secret key from environment variable
-const stripeClient = stripe('sk_test_51QWwrrGRZ5NyJeXFCdss3bt5rltr9y6VRPRrSDktZ8doqf4EphStaZErUxxVRldiknPOZMATksySbI1PqYFoXr2O00jywu54N7')
 
 export const CreatePayment = async (req, res) => {
-    const {amount} = req.body
+    const {amount,StripeKey} = req.body
+    const stripeClient = stripe(StripeKey)
     console.log('amount',amount)
     try {
         const paymentIntent = await stripeClient.paymentIntents.create({

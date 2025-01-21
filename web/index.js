@@ -16,6 +16,7 @@ import StoreModel from "./Models/Store.js";
 import User from "./Models/user.Model.js";
 import StripeRoutes from "./Routes/Stripe.js";
 import PaymentRoutes from "./Routes/PaymentRoute.js";
+import Payment from "./Models/Payment.js";
 
 const PORT = parseInt(
   process.env.BACKEND_PORT || process.env.PORT || "3000",
@@ -104,6 +105,53 @@ app.get('/api/store/info', async (req, res) => {
     res.status(500).json({ message: "Internal server Error" });
   }
 });
+
+//...........................PAYMENT_GET_API...............................................
+
+app.get("/customapi/shopify_payment", async (req, res) => {
+  try {
+    const { store_domain } = req.query;
+
+    // Validate store_Id
+    if (!store_domain) {
+      return res.status(400).json({
+        status: 400,
+        message: "store_domain is required",
+      });
+    }
+
+    // Fetch payment and user details
+    const payment = await Payment.findOne({ store_domain });
+    const user = await User.findOne({ store_domain });
+
+    // Check if both payment and user exist
+    if (!payment || !user) {
+      return res.status(404).json({
+        status: 404,
+        message: "Payment or User not found",
+      });
+    }
+
+    // Return success response with payment and user details
+    return res.status(200).json({
+      status: 200,
+      message: "Payment and User details fetched successfully",
+      data: {
+        payment,
+        user,
+      },
+    });
+  } catch (error) {
+    console.error("Error getting payment:", error);
+    return res.status(500).json({
+      status: 500,
+      message: "Internal Server Error",
+      error: error.message,
+    });
+  }
+});
+
+//...........................PAYMENT_GET_API...............................................
 //...........................ORDER_PLACE_API...............................................
 app.post('/customapi/shopify_order_place', async (req, res) => {
   try {

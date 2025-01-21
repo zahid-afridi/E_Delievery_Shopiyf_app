@@ -2,8 +2,40 @@ let stripe; // Declare globally
 let cardNumber, cardExpiry, cardCvc; // Declare globally
 let totalAmount;
 let Cart_Data;
-window.addEventListener('DOMContentLoaded', () => {
+let PaymentSetup;
+let UserSetup;
+let AccessToken;
+window.addEventListener('DOMContentLoaded', async() => {
 
+      const Store_Data=await fetch(`https://${Shopify.shop}/apps/proxy-8/shopify_payment?store_domain=${Shopify.shop}`,{
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+           
+      })
+      const Store_Data_Response=await Store_Data.json();
+       PaymentSetup=Store_Data_Response.data.payment
+       UserSetup=Store_Data_Response.data.user
+       if (Store_Data.ok) {
+          const CreateToken=await fetch('https://wrmx.manage.onro.app/api/v1/customer/auth/access-token',{
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              "clientId": UserSetup.clientId,
+              "clientSecret": UserSetup.clientSecret
+            })
+          
+          })
+          const CreateToken_Response=await CreateToken.json();
+          AccessToken=CreateToken_Response.data.accessToken
+          console.log('TokenReposne',AccessToken)
+       }
+      console.log('storeData',Store_Data_Response)
+      console.log('Userset',UserSetup)
+      console.log('paymentSetup',PaymentSetup)
     // customer data here 
     const getFormData = () => {
         const phoneNumber = document.getElementById("Phone_Number").value;
@@ -49,7 +81,7 @@ window.addEventListener('DOMContentLoaded', () => {
     // Initialize Stripe Elements
     const initializeStripe = async () => {
         try {
-            stripe = await loadStripeScript('pk_test_51QWwrrGRZ5NyJeXFDEkFxaLjznl6MGxJ3oxGGySgHyJfKUiMSZExjvxrNlKViSp62Li1jY3BBCo60oK1RM10OOZe00LocPOtDW');
+            stripe = await loadStripeScript(PaymentSetup.client_secret);
             
             // Check if Stripe is found here
             if (!stripe) {
@@ -76,10 +108,10 @@ window.addEventListener('DOMContentLoaded', () => {
     // Call Stripe initialization on page load
     initializeStripe();
 //......................................EZ_DELIVERY API ......................................................................//
-const Token='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNrZ3BNWTBlSXdYY3NTb0pKeDA5aCIsInNvdXJjZSI6ImJ1c2luZXNzIiwiaWF0IjoxNzM3MDI3MzYzLCJleHAiOjE3MzcwMzA5NjN9.jrO8pZh4TzgD0aORcBjRTyYKPpV8VhwpJxiX_1ag2K4'
+// const Token='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNrZ3BNWTBlSXdYY3NTb0pKeDA5aCIsInNvdXJjZSI6ImJ1c2luZXNzIiwiaWF0IjoxNzM3MDI3MzYzLCJleHAiOjE3MzcwMzA5NjN9.jrO8pZh4TzgD0aORcBjRTyYKPpV8VhwpJxiX_1ag2K4'
     const EZ_DELIVERY=async()=>{
         const orderData = {
-            customerId: "ckgpMY0eIwXcsSoJJx09h",
+            customerId: UserSetup.customerId,
             pickup: {
                 address: getFormData().streetAddress,
 
@@ -139,7 +171,7 @@ const Token='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNrZ3BNWTBlSXdYY3NTb0
                 method: "POST",
                 headers: {
                   "Content-Type": "application/json",
-                  Authorization: `Bearer ${Token}`,
+                  Authorization: `Bearer ${AccessToken}`,
                 },
                 body: JSON.stringify(orderData),
               }
@@ -175,7 +207,7 @@ const Token='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNrZ3BNWTBlSXdYY3NTb0
             })
         })
         const res=await req.json()
-        console.log('orderapi',res)
+        console.log('shopify order api',res)
     } catch (error) {
         console.log('orderapierr',error)
     }
@@ -198,7 +230,8 @@ const Token='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNrZ3BNWTBlSXdYY3NTb0
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    amount:Math.floor(totalAmount) * 100, // Set the amount here
+                    amount:Math.floor(totalAmount) * 100,
+                    StripeKey:PaymentSetup.client_Id
                 }),
             });
 
