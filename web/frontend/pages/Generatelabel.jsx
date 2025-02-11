@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Button,
   Card,
@@ -10,23 +10,45 @@ import Select from "react-select";
 import makeAnimated from "react-select/animated";
 import { BaseUrl, CustomerId, Token } from "../AuthToken/AuthToken";
 import { useSelector } from "react-redux";
+import toast from "react-hot-toast";
 
 const animatedComponents = makeAnimated();
 
 export default function GenerateLabel() {
   const [selectedOptions, setSelectedOptions] = useState([]);
+  const [orders, setOrders] = useState([]);
   const [pdfUrl, setPdfUrl] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-const StoreDetail = useSelector((state) => state.store);
-  console.log('StoreDetail From Redux:', StoreDetail);
-  // Mock options for the dropdown (replace with real options from API if needed)
-  const orderOptions = [
-    { value: "sHwKEzHAPoFas0K9bTtsc", label: "sHwKEzHAPoFas0K9bTtsc" },
-    { value: "RuqIsdHNxrYzcx9ol89Tq", label: "RuqIsdHNxrYzcx9ol89Tq" },
-    { value: "c4DTO0KlM97H4vl9juuDN", label: "c4DTO0KlM97H4vl9juuDN" },
-    { value: "uZoQNLGtyzRfkNlqVylbr", label: "uZoQNLGtyzRfkNlqVylbr" },
-  ];
+  const StoreDetail = useSelector((state) => state.store);
+
+  useEffect(() => {
+    GetOrders();
+  }, []);
+
+  const GetOrders = async () => {
+    try {
+      const req = await fetch(
+        `${BaseUrl}/api/v1/customer/order/?customerId=${StoreDetail.User.customerId}`,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${StoreDetail.Token}`,
+          },
+        }
+      );
+      const response = await req.json();
+      if (req.ok) {
+        setOrders(response.data);
+      } else {
+        toast.error(response.message || 'Failed to fetch orders');
+      }
+    } catch (error) {
+      console.error('Error fetching orders:', error);
+      toast.error('An unexpected error occurred');
+    }
+  };
 
   const handleGenerateLabel = async () => {
     if (!selectedOptions.length) {
@@ -81,6 +103,9 @@ const StoreDetail = useSelector((state) => state.store);
     setPdfUrl(null);
   };
 
+  // Dynamically map orders to dropdown options
+  const orderOptions = orders.map(order => ({ value: order.id, label: order.id }));
+
   return (
     <div
       style={{
@@ -97,7 +122,7 @@ const StoreDetail = useSelector((state) => state.store);
             Select the Order IDs below and click on "Generate Label".
           </Text>
 
-          {/* Make the dropdown wider */}
+          {/* Dropdown with dynamic order options */}
           <div style={{ width: "800px" }}>
             <Select
               components={animatedComponents}

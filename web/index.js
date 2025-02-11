@@ -1,8 +1,9 @@
 // @ts-check
-import { join } from "path";
+import path, { join } from "path";
 import { readFileSync } from "fs";
 import express from "express";
 import serveStatic from "serve-static";
+import { fileURLToPath } from "url";
 
 import connectDB from "./Utils/db.js";
 connectDB();
@@ -28,6 +29,7 @@ const STATIC_PATH =
     ? `${process.cwd()}/frontend/dist`
     : `${process.cwd()}/frontend/`;
 
+
 const app = express();
 
 // Set up Shopify authentication and webhook handling
@@ -47,6 +49,13 @@ app.use(express.json());
 
 app.use("/api/*", shopify.validateAuthenticatedSession());
 app.use("/customapi/*", authenticateUser);
+
+const __filename = fileURLToPath(import.meta.url); // Get the file name from import.meta.url
+const __dirname = path.dirname(__filename); // Get the directory name
+
+const PublicPaath = path.join(__dirname, "public"); // Resolve the path to the public folder
+
+app.use(express.static(PublicPaath));
 async function authenticateUser(req,res,next){
   let shop=req.query.shop
   let storeName= await shopify.config.sessionStorage.findSessionsByShop(shop)
@@ -173,6 +182,7 @@ app.post('/customapi/shopify_order_place', async (req, res) => {
 
     // Create a new order object
     const order = new shopify.api.rest.Order({ session: shopSession });
+    
     order.line_items = orderData.items.map(item => ({
         variant_id: item.variant_id,
         quantity: item.quantity,
@@ -220,12 +230,18 @@ app.post('/customapi/shopify_order_place', async (req, res) => {
       // You can add more customer details here if needed
       id: 6899567624476  // you can also add customer by id
     };
-
+    order.transactions = [
+      {
+        "kind": "sale",
+        "status": "success",
+        "amount": parseFloat(orderData.total_price) // Or calculate the correct amount
+      }
+    ];
     await order.save({
       update: true,
     });
-    console.log('Order placed successfully:', order.id);
-    res.status(200).send({ success: true, message: 'Order placed successfully', orderId: order.id });
+    console.log('Order placed successfully with status url:', order.order_status_url);
+    res.status(200).send({ success: true, message: 'Order placed successfully', order });
   } catch (error) {
     console.error('Error placing order:', error);
     res.status(500).send({ success: false, message: 'Failed to place order', error: error.message });
@@ -259,5 +275,5 @@ app.use("/*", shopify.ensureInstalledOnShop(), async (_req, res, _next) => {
         .replace("%VITE_SHOPIFY_API_KEY%", process.env.SHOPIFY_API_KEY || "")
     );
 });
-
+console.log('port',PORT)
 app.listen(PORT);

@@ -9,7 +9,8 @@
         <section>
           <h3>Contact Information</h3>
           <input type="tel" id="Phone_Number" placeholder="Phone number" value="">
-          <input type="email" id="customerEmail" placeholder="Email" value=""> </section>
+          <input type="email" id="customerEmail" placeholder="Email" value="">
+        </section>
 
         <section>
           <h3>Delivery Information</h3>
@@ -24,54 +25,66 @@
             <input type="text" id="city" placeholder="City" value="Karachi">
           </div>
           <input id="streetAddress" placeholder="Street Address, Karachi (Optional)" rows="3">
-          <input type="text" id="postalCode" placeholder="Postal Code" value="74200">
+          <input type="text" id="postalCode" placeholder="Postal Code"  value="">
+          <div id="errorPostalcodeMessage" style="color: red; font-size: 14px;"></div>
         </section>
 
         <section>
           <h3>Shipping Method</h3>
-          <div class="input-group">
-            <select id="shippingMethod">
-              <option value="0">Select Shipping Method</option>
-              <option value="23.5" id="Same_day_delivery">Same Day Delivery - $23.5</option>
-              <option value="18.5">Next Day Delivery - $18.5 (Cut off will be at 5pm)</option>
-              <option value="85.0">Top Priority Delivery - $85.0 (delivered within 2 hrs)</option>
-            </select>
-          </div>
-          <div class="input-group hideNextDay_Date_Input " id="hideInput">
-            <div>
-              <label>8am- 12pm</label>
-              <input type="radio" name="subscribe" value="newsletter">
-            </div>
-            <div>
-              <label>12pm-4pm</label>
-              <input type="radio" name="subscribe" value="newsletter">
-            </div>
-            <div>
-              <label>4pm-8pm</label>
-              <input type="radio" name="subscribe" value="newsletter">
-            </div>
-              
-              
-              
-          </div>
-          
+          {% comment %} <p>This checkout uses Ez Delivery for delivery.</p> {% endcomment %}
+          <input type="text" id="shippingMethod" value="Ez Delivery" readonly>
         </section>
 
         <section>
-          <h3>Payment Method</h3>
+          <h3> Shipping Time</h3>
+          <div class="delivery-options-container">
+            <div class="input-group">
+              <select id="EzDelivery_Option">
+                              <option value="0">Select Shipping Time</option>
+                              <option value="23.5" id="Same_day_delivery">Same Day Delivery - $23.5 (delivered between 4pm-8pm)</option>
+                              <option value="18.5">Next Day Delivery - $18.5 (Cut off will be at 5pm)</option>
+                              <option value="85.0">Top Priority Delivery - $85.0 (delivered within 2 hrs)</option>
+                            </select>
+            </div>
+    
+            <div class="footer">
+               <div class="powered-by">
+                    <img style="width:30px ; height: 30px;" src="http://localhost:63615/assets/logo.png" alt="Quiver Logo">
+                     <span style="color: #223F8D;">Powered by Ez Delivery</span>
+               </div>
+                {% comment %} <span>Saving 1.6kg of CO₂</span> {% endcomment %}
+            </div>
+        </div>
+          <div class=" hideNextDay_Date_Input " id="hideInput">
+            <div class="single_radio-info">
+              <input type="radio" name="subscribe" value="newsletter">
+              <label>8 AM - 12 PM</label>
+            </div>
+            <div class="single_radio-info">
+              <input type="radio" name="subscribe" value="newsletter">
+              <label>12 PM - 4 PM</label>
+            </div>
+            <div class="single_radio-info">
+              <input type="radio" name="subscribe" value="newsletter">
+              <label>4 PM - 8 PM</label>
+            </div>
+          </div>
+        </section>
+
+        <section>
+          <h3>Payment</h3>
           <div class="input-group">
             <div id="card-number"></div>
             <div id="card-expiry"></div>
             <div id="card-cvc"></div>
           </div>
-          <button type="submit" class="pay-button">Pay Now</button>
+          <button type="submit" id="Pay__now" class="pay-button">Pay Now</button>
         </section>
       </form>
       <div style="position: fixed;top: 80px;right: 30px;width: 30%;overflow: hidden;">
-        <div class="order-summary">
+        <div class="order-summary" id="OrderSummary">
           <h3>Order Summary</h3>
-          <div id="productList">
-            </div>
+          <div id="productList"></div>
         </div>
         <div class="order-pricing">
           <div class="summary-line">
@@ -88,10 +101,45 @@
           </div>
         </div>
       </div>
+      <!-- Add this inside modal-content -->
+<div id="thankYouSection" style="display: none; z-index:100;" >
+  <div class="thank-you-content">
+    <h2>Thank you for your order! 🎉</h2>
+    
+    <div class="order-details">
+      <p>
+        YOUR ORDER IS CONFIRMED
+        <span id="thankYouOrderNumber"></span>
+    </p>
+      <p> <span id="thankYouEmail"></span></p>
+      We've accepted your order,and we're getting it ready. 
     </div>
-    <div class="modal-footer">
+
+    <div class="shipping-info">
+      <h3>Shipping Information</h3>
+      <p id="thankYouName"></p>
+      <p id="thankYouAddress"></p>
+      <p id="thankYouCity"></p>
+      <p id="thankYouPostal"></p>
+    </div>
+
+    <div class="order-summary">
+      <h3>Order Summary</h3>
+      <div id="thankYouProducts"></div>
+      <p class="total">Total: $<span id="thankYouTotal">129.46</span></p>
+    </div>
+
+    <div style="display: flex; flex-direction: row; gap: 0px; justify-content: center; align-items: center;">
+      <button id="continueShopping" class="continue-btn">Continue Shopping</button>
+      <button id="TrackTheOrder" class="continue-btn">Track you order</button>
+   </div>
+  </div>
+</div>
+
+    </div>
+    {% comment %} <div class="modal-footer">
       <p>Secure Payment</p>
-    </div>
+    </div> {% endcomment %}
   </div>
 </div>
 

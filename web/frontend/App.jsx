@@ -1,4 +1,4 @@
-import { BrowserRouter } from "react-router-dom";
+import { BrowserRouter, Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { NavMenu } from "@shopify/app-bridge-react";
 import Routes from "./Routes";
@@ -102,12 +102,12 @@ export default function App() {
         <>
           <QueryProvider>
             <NavMenu>
-              <a href="/" rel="home" />
-              <a href="/Generatelabel" element={<Generatelabel />}>
+              <Link to="/" rel="home" />
+              <Link to="/Generatelabel" element={<Generatelabel />}>
                 Generate Label
-              </a>
+              </Link>
               
-              <a href="/Settings" element={<Settings />}>Payment Gateway Setting</a>
+              <Link to="/Settings" element={<Settings />}>Payment Gateway Setting</Link>
             </NavMenu>
             <Routes pages={pages} />
           </QueryProvider>
