@@ -27,6 +27,9 @@
           <input id="streetAddress" placeholder="Street Address, Karachi (Optional)" rows="3">
           <input type="text" id="postalCode" placeholder="Postal Code"  value="">
           <div id="errorPostalcodeMessage" style="color: red; font-size: 14px;"></div>
+          <textarea placeholder="Note" id="Note_Text"></textarea>
+          
+
         </section>
 
         <section>
@@ -49,7 +52,7 @@
     
             <div class="footer">
                <div class="powered-by">
-                    <img style="width:30px ; height: 30px;" src="http://localhost:63615/assets/logo.png" alt="Quiver Logo">
+                    <img style="width:30px ; height: 30px;" src="http://localhost:50288/assets/logo.png" alt="Quiver Logo">
                      <span style="color: #223F8D;">Powered by Ez Delivery</span>
                </div>
                 {% comment %} <span>Saving 1.6kg of CO₂</span> {% endcomment %}
@@ -102,39 +105,96 @@
         </div>
       </div>
       <!-- Add this inside modal-content -->
-<div id="thankYouSection" style="display: none; z-index:100;" >
-  <div class="thank-you-content">
-    <h2>Thank you for your order! 🎉</h2>
-    
-    <div class="order-details">
-      <p>
-        YOUR ORDER IS CONFIRMED
-        <span id="thankYouOrderNumber"></span>
-    </p>
-      <p> <span id="thankYouEmail"></span></p>
-      We've accepted your order,and we're getting it ready. 
-    </div>
+      <div id="thankYouSection" style="display:none; z-index: 100">
+        <div class="thank-you-content">
+          <h2>Thank you for your orders ! 🎉</h2>
 
-    <div class="shipping-info">
-      <h3>Shipping Information</h3>
-      <p id="thankYouName"></p>
-      <p id="thankYouAddress"></p>
-      <p id="thankYouCity"></p>
-      <p id="thankYouPostal"></p>
-    </div>
+          <div class="order-details">
+            <p>
+              YOUR ORDER IS CONFIRMED
+              <span id="thankYouOrderNumber"></span>
+            </p>
+            <p><span id="thankYouEmail"></span></p>
+            We've accepted your order,and we're getting it ready.
+          </div>
+          <div class="order-details">
+            <p>
+             NOTES
+              <span id="thankYouOrderNumber"></span>
+            </p>
+            
+            <p id="Note_Text_show">We've accepted your order,and we're getting it ready.</p>
+          </div>
+          <div
+            class="grid_div"
+            style="
+              display: flex;
+              justify-content: space-between;
+              align-items: flex-start;
+              gap: 2rem;
+            "
+          >
+            <div class="shipping-info">
+              <h3>Shipping Information</h3>
+              <p id="thankYouEmaill">test@gmail.com</p>
 
-    <div class="order-summary">
-      <h3>Order Summary</h3>
-      <div id="thankYouProducts"></div>
-      <p class="total">Total: $<span id="thankYouTotal">129.46</span></p>
-    </div>
+              <p id="thankYouName">Test user</p>
+              <p id="thankYouAddress">Block No 1 abc street</p>
+              <div>
+                <p id="thankYouCity">
+                  Karachi,Pakistan <span id="thankYouPostal"> 10035</span>
+                </p>
+              </div>
 
-    <div style="display: flex; flex-direction: row; gap: 0px; justify-content: center; align-items: center;">
-      <button id="continueShopping" class="continue-btn">Continue Shopping</button>
-      <button id="TrackTheOrder" class="continue-btn">Track you order</button>
-   </div>
-  </div>
-</div>
+              <h3 style="margin-top: 2rem">Your Order</h3>
+              <div id="Order_detail"></div>
+            </div>
+
+            <div class="order-summary">
+              <h3>Order Summary</h3>
+
+              <div id="total_Container">
+
+                <div
+                  class="product_Total_price"
+                  style="display: flex; justify-content: space-between"
+                >
+                  <p>Subtotal</p>
+                  <p id="priceOfProducts">abcd</p>
+                </div>
+                <div
+                  class="Shipment_price"
+                  style="display: flex; justify-content: space-between"
+                >
+                  <p>Shipping Price</p>
+                  <p id="Shipment_Type">19</p>
+                </div>
+                
+                <div class="total">
+                  <p>Total</p>
+                  <p id="thankYouTotalll">129.46</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div
+            style="
+
+            display: flex;
+            justify-content: end;
+            gap: 1rem;
+            "
+          >
+            <button id="continueShopping" class="continue-btn">
+              Continue Shopping
+            </button>
+            <button id="TrackTheOrder" class="continue-btn">
+              Track you order
+            </button>
+          </div>
+        </div>
+      </div>
 
     </div>
     {% comment %} <div class="modal-footer">

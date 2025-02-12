@@ -1,290 +1,286 @@
 /* Modal Styles */
 #checkoutModal {
-    display: none;
-    font-family: "Roboto", sans-serif;
-    position: fixed;
-    z-index: 1000;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: #eef2f7;
-    overflow: auto;
-  }
-  
-  #checkoutModal .modal-content {
-    background: linear-gradient(135deg, #ffffff, #f7f9fc);
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-  }
-  
-  #checkoutModal .modal-header {
-    padding: 11px 20px;
-    background-color: #ffffff;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    box-shadow: 1px 3px 15px 10px rgba(0, 0, 0, 0.2);
-  }
-  
-  #checkoutModal .modal-header h2 {
-    margin: 0;
-    font-size: 1.8rem;
-    font-weight: 700;
-  }
-  
-  #checkoutModal .close-button {
-    color: rgb(0, 0, 0);
-    font-size: 2rem;
-    font-weight: bold;
-    cursor: pointer;
-    transition: transform 0.2s ease;
-  }
-  
-  #checkoutModal .close-button:hover {
-    transform: scale(1.1);
-  }
-  
-  #checkoutModal .modal-body {
-    display: flex;
-    align-items: center;
-    gap: 25px;
-    padding: 25px;
-    overflow: hidden; /* Ensure layout doesn't overflow */
-  }
-  
-  #checkoutModal #productList {
-    height: 45vh;
-  }
-  
-  #checkoutModal .product-section {
-    flex: 1;
-    overflow-y: auto;
-    max-height: calc(100vh - 100px); /* Adjust height based on header/footer */
-    padding-right: 10px;
-    margin-right: 10px;
-  }
-  
-  #checkoutModal .price-summary-section {
-    flex: 0.4;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-  }
-  
-  #checkoutModal .order-summary {
-    position: sticky;
-    bottom: 0; /* Sticks the summary to the bottom */
-    background-color: #f9f9f9;
-    border-radius: 15px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-    border: 1px solid #e3e8f0;
-    padding: 25px;
-    max-height: calc(100vh - 50px);
-    overflow-y: auto;
-    width: 30vw;
-  }
-  
-  #checkoutModal form {
-    padding: 30px;
-    background: white;
-    border-radius: 15px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-    border: 1px solid #e3e8f0;
-    width: 68%;
-  }
-  
-  #checkoutModal h3 {
-    margin-top: 0;
-    color: #0284c7;
-    font-size: 1.3rem;
-    font-weight: 700;
-    margin-bottom: 15px;
-  }
-  
-  #checkoutModal input,
-  #checkoutModal select,
-  #checkoutModal textarea {
-    width: 100%;
-    padding: 15px;
-    margin-bottom: 20px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    box-sizing: border-box;
-    font-size: 1.05rem;
-    background: #f7f9fc;
-    transition: border-color 0.3s ease, box-shadow 0.3s ease;
-  }
-  
-  #checkoutModal input:focus,
-  #checkoutModal select:focus,
-  #checkoutModal textarea:focus {
-    border-color: #0284c7;
-    outline: none;
-    box-shadow: 0 0 8px rgba(2, 132, 199, 0.7);
-  }
-  
-  #checkoutModal textarea {
-    resize: vertical;
-    min-height: 80px;
-  }
-  
-  #checkoutModal .pay-button {
-    background-color: #0284c7;
-    color: white;
-    padding: 18px;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 1.1rem;
-    width: 100%;
-    text-align: center;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
-  }
-  
-  #checkoutModal .pay-button:hover {
-    background-color: #0369a1;
-    transform: translateY(-2px);
-  }
-  
-  #checkoutModal .summary-line {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 12px;
-    font-size: 1.1rem;
-    color: #333;
-  }
-  
-  #checkoutModal .summary-line.total {
-    font-weight: bold;
-    border-top: 2px solid #ccc;
-    padding-top: 15px;
-    font-size: 1.4rem;
-    color: #0284c7;
-  }
-  
-  #checkoutModal .product {
-    display: flex;
-    align-items: center;
-    margin-bottom: 20px;
-    gap: 15px;
-  }
-  
-  #checkoutModal .product img {
-    width: 80px;
-    height: 80px;
-    border-radius: 8px;
-    border: 1px solid #ddd;
-    object-fit: cover;
-  }
-  
-  #checkoutModal .product div p {
-    font-weight: 600;
-    margin-bottom: 5px;
-    font-size: 11px;
-  }
-  
-  #checkoutModal section {
-    margin-bottom: 30px;
-  }
-  
-  #checkoutModal .input-group {
-    display: flex;
-    gap: 15px;
-    flex-wrap: wrap;
-  }
-  
-  #checkoutModal .input-group input,
-  #checkoutModal .input-group select {
-    flex: 1;
-    min-width: 120px;
-  }
-  
-  /* Responsive Design */
-  @media (max-width: 768px) {
-    #checkoutModal .modal-body {
-      flex-direction: column;
-    }
-  
-    #checkoutModal .order-summary {
-      position: static;
-      flex: none;
-      margin-top: 20px;
-      max-height: none;
-      overflow-y: visible;
-    }
-  
-    #checkoutModal .input-group {
-      flex-direction: column;
-      gap: 10px;
-    }
-  
-    #checkoutModal .input-group input,
-    #checkoutModal .input-group select {
-      min-width: 0;
-    }
-  
-    #checkoutModal .modal-header h2 {
-      font-size: 1.3rem;
-    }
-  
-    #checkoutModal .close-button {
-      font-size: 1.5rem;
-    }
-  
-    #checkoutModal .pay-button {
-      font-size: 1rem;
-    }
-  }
-  #card-number,
-#card-expiry,
-#card-cvc {
-    border: 1px solid #ddd;
-
-    flex: 1;
-    margin-bottom: 10px;
-    border-radius: 5px;
-    min-width: 120px;
-
-    height: 40px;
+  font-family: "Roboto", sans-serif;
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #eef2f7;
+  overflow: auto;
 }
-
-#card-number iframe,
-#card-expiry iframe,
-#card-cvc iframe {
-    width: 100%;
-    height: 100%;
-}
-
 #checkoutModal .hideNextDay_Date_Input{
   display: none;
 }
 #checkoutModal .hideEzDelivery{
   display: none;
 }
+#checkoutModal .modal-content {
+  background: linear-gradient(135deg, #ffffff, #f7f9fc);
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+#checkoutModal .modal-header {
+  padding: 11px 20px;
+  background-color: #ffffff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 1px 3px 15px 10px rgba(0, 0, 0, 0.2);
+}
+
+#checkoutModal .modal-header h2 {
+  margin: 0;
+  font-size: 1.8rem;
+  font-weight: 700;
+}
+
+#checkoutModal .close-button {
+  color: rgb(0, 0, 0);
+  font-size: 2rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+#checkoutModal .close-button:hover {
+  transform: scale(1.1);
+}
+
+#checkoutModal .modal-body {
+  display: flex;
+  align-items: center;
+  gap: 25px;
+  padding: 25px;
+  overflow: hidden; /* Ensure layout doesn't overflow */
+}
+
+#checkoutModal #productList {
+  height: 45vh;
+}
+
+#checkoutModal .product-section {
+  flex: 1;
+  overflow-y: auto;
+  max-height: calc(100vh - 100px); /* Adjust height based on header/footer */
+  padding-right: 10px;
+  margin-right: 10px;
+}
+
+#checkoutModal .price-summary-section {
+  flex: 0.4;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+#checkoutModal .order-summary {
+  position: sticky;
+  background-color: #f9f9f9;
+  border-radius: 15px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  border: 1px solid #e3e8f0;
+  margin-top: 1.2rem;
+  overflow-y: auto;
+  width: 30vw;
+}
+
+#checkoutModal form {
+  padding: 30px;
+  background: white;
+  border-radius: 15px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  border: 1px solid #e3e8f0;
+  width: 68%;
+}
+
+#checkoutModal h3 {
+  margin-top: 0;
+  color: #0284c7;
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin-bottom: 15px;
+}
+
+#checkoutModal input,
+#checkoutModal select,
+#checkoutModal textarea {
+  width: 100%;
+  padding: 15px;
+  margin-bottom: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-sizing: border-box;
+  font-size: 1.05rem;
+  background: #f7f9fc;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+#checkoutModal input:focus,
+#checkoutModal select:focus,
+#checkoutModal textarea:focus {
+  border-color: #0284c7;
+  outline: none;
+  box-shadow: 0 0 8px rgba(2, 132, 199, 0.7);
+}
+
+#checkoutModal textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+#checkoutModal .pay-button {
+  background-color: #0284c7;
+  color: white;
+  padding: 18px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1.1rem;
+  width: 100%;
+  text-align: center;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+#checkoutModal .pay-button:hover {
+  background-color: #0369a1;
+  transform: translateY(-2px);
+}
+
+#checkoutModal .summary-line {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  font-size: 1.1rem;
+  color: #333;
+}
+
+#checkoutModal .summary-line.total {
+  font-weight: bold;
+  border-top: 2px solid #ccc;
+  padding-top: 15px;
+  font-size: 1.4rem;
+  color: #0284c7;
+}
+
+#checkoutModal .product {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+  gap: 15px;
+}
+
+#checkoutModal .product img {
+  width: 80px;
+  height: 80px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  object-fit: cover;
+}
+
+#checkoutModal .product div p {
+  font-weight: 600;
+  margin-bottom: 5px;
+  font-size: 11px;
+}
+
+#checkoutModal section {
+  margin-bottom: 30px;
+}
+
+#checkoutModal .input-group {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+#checkoutModal .input-group input,
+#checkoutModal .input-group select {
+  flex: 1;
+  min-width: 120px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  #checkoutModal .modal-body {
+    flex-direction: column;
+  }
+
+  #checkoutModal .order-summary {
+    position: static;
+    flex: none;
+    margin-top: 20px;
+    max-height: none;
+    overflow-y: visible;
+  }
+
+  #checkoutModal .input-group {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  #checkoutModal .input-group input,
+  #checkoutModal .input-group select {
+    min-width: 0;
+  }
+
+  #checkoutModal .modal-header h2 {
+    font-size: 1.3rem;
+  }
+
+  #checkoutModal .close-button {
+    font-size: 1.5rem;
+  }
+
+  #checkoutModal .pay-button {
+    font-size: 1rem;
+  }
+}
+#card-number,
+#card-expiry,
+#card-cvc {
+  border: 1px solid #ddd;
+
+  flex: 1;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  min-width: 120px;
+
+  height: 40px;
+}
+
+#card-number iframe,
+#card-expiry iframe,
+#card-cvc iframe {
+  width: 100%;
+  height: 100%;
+}
 
 /* my css */
-#hideInput{
-    display: flex;
-    justify-content: space-between;
+#hideInput {
+  display: flex;
+  justify-content: space-between;
 }
-.single_radio-info{
-   display: flex;
-    width: 30%;
-    border: 2px solid #ccc;
-    border-radius: 10px;
-    align-items: anchor-center;
-    justify-content: center;
-    gap: 15px;
-    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
-    padding: 15px 0;
+.single_radio-info {
+  display: flex;
+  width: 30%;
+  border: 2px solid #ccc;
+  border-radius: 10px;
+  align-items: anchor-center;
+  justify-content: center;
+  gap: 15px;
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+  padding: 15px 0;
 }
-.single_radio-info input{ 
+.single_radio-info input {
   width: auto !important;
-  margin: 0 !important
-} 
+  margin: 0 !important;
+}
 /* Add these styles to your CSS */
 #thankYouSection {
   padding: 30px;
@@ -292,7 +288,7 @@
 }
 
 .thank-you-content {
-  max-width: 600px;
+  max-width: 90%;
   margin: 0 auto;
   text-align: center;
 }
@@ -333,24 +329,19 @@
 .continue-btn:hover {
   background: #0369a1;
 }
-/* Add this to hide the sidebar order summary */
-#thankYouSection.active ~ .order-summary {
-  display: none;
-}/* Existing styles from your provided CSS - keep all of those,
-   and add/modify with the following: */
 
 #thankYouSection {
-  display: none; /* Initially hidden */
+  display: none;
   padding: 40px; /* More generous padding */
   width: 100%; /* Ensure it takes full width */
   background-color: #f5f5f5; /* Lighter background */
-  font-family: 'Roboto', sans-serif; /* Consistent font */
+  font-family: "Roboto", sans-serif; /* Consistent font */
   border-radius: 10px; /* Rounded corners for the entire section */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
 }
 
 .thank-you-content {
-  max-width: 800px; /* Wider content area */
+  max-width: 90%; /* Wider content area */
   margin: 0 auto;
   text-align: left; /* Align content to the left, like the image */
 }
@@ -364,10 +355,12 @@
   align-items: center; /* Vertically center icon */
   gap: 10px; /* Space between icon and text */
 }
-
+#thankYouSection.active ~ .order-summary {
+  display: none;
+}
 /* Style for the checkmark icon (using a pseudo-element) */
 .thank-you-content h2::before {
-  content: '✓'; /* Checkmark character */
+  content: "✓"; /* Checkmark character */
   color: #28a745; /* Green checkmark */
   font-size: 2.8rem; /* Slightly larger icon */
   display: inline-block; /* Treat as inline block */
@@ -387,8 +380,9 @@
   color: #555; /* Slightly lighter text color */
 }
 
-.order-details p:first-child { /* Style the order number line */
-font-weight: bold;
+.order-details p:first-child {
+  /* Style the order number line */
+  font-weight: bold;
 }
 
 .shipping-info {
@@ -396,11 +390,13 @@ font-weight: bold;
   margin-bottom: 25px;
   padding: 25px;
   background: #fff;
+
+  width: 100%;
   border-radius: 10px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
-.shipping-info h3{
-    margin-bottom: 5px;
+.shipping-info h3 {
+  margin-bottom: 5px;
 }
 
 .shipping-info p {
@@ -425,10 +421,15 @@ font-weight: bold;
   margin-bottom: 20px;
 }
 
-.thank-you-content .total { /* Style the total line */
+.thank-you-content .total {
+  /* Style the total line */
+  border-top: 1px solid black;
+  padding-top: 1rem;
   font-size: 1.5rem; /* Larger total */
   font-weight: bold;
   color: #333;
+  display: flex;
+  justify-content: space-between;
   margin-top: 15px;
   text-align: right; /* Align total to the right */
 }
@@ -444,21 +445,15 @@ font-weight: bold;
   margin-top: 30px; /* More top margin */
   transition: background 0.3s ease;
   display: block; /* Make it a block element for centering */
-  margin-left: auto; /* Auto margins for centering */
-  margin-right: auto;
 }
 
 .continue-btn:hover {
   background: #0369a1;
 }
 
-/* Hide the original sidebar summary when thank you is active */
-#thankYouSection.active ~ .order-summary {
-  display: none;
-}
-#map{
-      margin-top: 10px;
-   border-radius: 10px;
+#map {
+  margin-top: 10px;
+  border-radius: 10px;
 }
 
 .delivery-options-container {
@@ -485,8 +480,8 @@ font-weight: bold;
   font-size: 16px;
   appearance: none; /* Remove default appearance */
   -webkit-appearance: none; /* For Safari/Chrome */
-  -moz-appearance: none;    /* For Firefox */
-   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 5'%3E%3Cpath fill='%23343a40' d='M2 0L0 2h4zm0 5L0 3h4z'/%3E%3C/svg%3E"); /* Custom dropdown arrow */
+  -moz-appearance: none; /* For Firefox */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 5'%3E%3Cpath fill='%23343a40' d='M2 0L0 2h4zm0 5L0 3h4z'/%3E%3C/svg%3E"); /* Custom dropdown arrow */
   background-repeat: no-repeat;
   background-position: right 10px center; /* Position the arrow */
   background-size: 8px 10px;
@@ -498,9 +493,7 @@ font-weight: bold;
   padding: 10px;
   background-color: #fff; /* Ensure options have a white background */
   color: #333; /* Dark text for better readability */
-
 }
-
 
 .footer {
   display: flex;
@@ -513,12 +506,58 @@ font-weight: bold;
   font-size: 0.9em;
 }
 .footer img {
-      width: 20px;
-      height: 20px;
-      margin-right: 5px;
-  }
+  width: 20px;
+  height: 20px;
+  margin-right: 5px;
+}
 
-.powered-by{
-  display:flex;
-  align-items: center;/*vertical-align*/
+.powered-by {
+  display: flex;
+  align-items: center; /*vertical-align*/
+}
+
+/* Container for each product item */
+.product-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 10px;
+  border-bottom: 1px solid #ccc;
+}
+
+/* Style for the product image */
+.product-image img {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+/* Middle section for title and quantity */
+.product-info {
+  flex-grow: 1;
+  margin: 0 20px;
+}
+
+/* Product title styling */
+.product-title {
+  font-weight: bold;
+  font-size: 1.1em;
+  margin-bottom: 4px;
+}
+
+/* Product quantity styling */
+.product-quantity {
+  font-size: 0.9em;
+  color: #555;
+}
+
+/* Price on the right */
+.product-price {
+  font-weight: bold;
+  font-size: 1.1em;
+  color: #333;
+}
+#thankYouSection.active ~ .order-summary {
+  display: none;
 }
