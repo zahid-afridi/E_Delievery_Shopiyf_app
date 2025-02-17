@@ -21,4 +21,3 @@ const ShippingMethodSchema=new mongoose.Schema({
 
 const ShippingModal= mongoose.model("ShippingMethod",ShippingMethodSchema)
 export default ShippingModal
-// export default ShippingModal
