@@ -18,6 +18,7 @@ import User from "./Models/user.Model.js";
 import StripeRoutes from "./Routes/Stripe.js";
 import PaymentRoutes from "./Routes/PaymentRoute.js";
 import Payment from "./Models/Payment.js";
+import ShippingRoutes from "./Routes/ShippingRoutes.js";
 
 const PORT = parseInt(
   process.env.BACKEND_PORT || process.env.PORT || "3000",
@@ -70,10 +71,15 @@ async function authenticateUser(req,res,next){
 
 app.use("/api", AuthRoutes);
 app.use('/api',PaymentRoutes)
+app.use("/api",ShippingRoutes);
 app.use("/customapi", StripeRoutes);
 app.get('/customapi',async(req,res)=>{
   console.log('api hit successfully')
   res.send('hello')
+})
+app.use('/forPostman',ShippingRoutes)
+app.get('/forPostman',async(req,res)=>{
+  res.send('working bro')
 })
 // weebokk try
 ///
