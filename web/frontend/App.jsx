@@ -108,6 +108,7 @@ export default function App() {
               </Link>
               
               <Link to="/Settings" element={<Settings />}>Payment Gateway Setting</Link>
+              <Link to="/AddShippingMethod" element={<Settings />}>Add Shipping Method</Link>
             </NavMenu>
             <Routes pages={pages} />
           </QueryProvider>
