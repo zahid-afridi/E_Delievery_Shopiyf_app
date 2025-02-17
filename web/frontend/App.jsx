@@ -13,6 +13,7 @@ import { useDispatch } from "react-redux";
 import { setStoreDetail, setToken, setUser } from "./redux/slices/StoreSlice.js";
 import { BaseUrl } from "./AuthToken/AuthToken.js";
 import Settings from "./pages/Settings.jsx";
+import { Spinner } from "@shopify/polaris";
 
 export default function App() {
   const dispatch = useDispatch();
@@ -83,16 +84,11 @@ export default function App() {
   // Show a loading screen while the API call is in progress
   if (isLoading) {
     return (
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          height: "100vh",
-        }}
-      >
-        <h1>Loading...</h1>
+      <>
+      <div style={{display:'flex',justifyContent:"center",minHeight:"100vh",alignItems:"center"}}>
+      <Spinner accessibilityLabel="Spinner example" size="large"  />
       </div>
+      </>
     );
   }
 
