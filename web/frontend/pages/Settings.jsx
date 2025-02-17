@@ -15,6 +15,7 @@ import { ArrowLeftMinor } from "@shopify/polaris-icons";
 import { useNavigate } from "react-router-dom";
 import "./style.css"; // Import the CSS file
 import { useSelector } from "react-redux";
+import toast from "react-hot-toast";
 
 export default function Settings() {
   const [selectedGateway, setSelectedGateway] = useState("");
@@ -40,7 +41,8 @@ export default function Settings() {
       console.log("PayPal Client ID:", paypalClientId);
       console.log("PayPal Client Secret:", paypalClientSecret);
     }
-    alert("Settings saved!");
+    // alert("Settings saved!");
+    toast.success('Settings saved!')
 
     handleSubmit();
   };
@@ -147,6 +149,13 @@ export default function Settings() {
             {selectedGateway === "stripe" && (
               <div className="form-fade-in">
                 <VerticalStack gap="4">
+                <TextField
+                    label="Publishable Key"
+                    type="password"
+                    value={stripePublishableKey}
+                    onChange={(value) => setStripePublishableKey(value)}
+                    autoComplete="off"
+                  />
                   <TextField
                     label="Secret Key"
                     type="password"
@@ -154,13 +163,7 @@ export default function Settings() {
                     onChange={(value) => setStripeSecretKey(value)}
                     autoComplete="off"
                   />
-                  <TextField
-                    label="Publishable Key"
-                    type="password"
-                    value={stripePublishableKey}
-                    onChange={(value) => setStripePublishableKey(value)}
-                    autoComplete="off"
-                  />
+                
                 </VerticalStack>
               </div>
             )}

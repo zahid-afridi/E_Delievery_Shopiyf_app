@@ -11,6 +11,7 @@ let PostalCode;
 let Loading=false
 let TrackOrderUrl;
 let ShippingPrice;
+let subtotal;
 window.addEventListener('DOMContentLoaded', async () => {
         // Modal Toggle and Event Listeners
         const modal = document.getElementById("checkoutModal");
@@ -72,7 +73,7 @@ window.addEventListener('DOMContentLoaded', async () => {
       
             // Create image element (Google Logo)
             const logoImg = document.createElement('img');
-            logoImg.src = 'http://localhost:61133/assets/logo.png   '; // More appropriate Google logo URL
+            logoImg.src = 'http://localhost:52773/assets/logo.png   '; // More appropriate Google logo URL
             logoImg.alt = 'Google Logo';
             logoImg.style.width = '30px'; // Increased logo size
             logoImg.style.height = '30px'; // Increased logo size
@@ -416,6 +417,15 @@ postalCode.addEventListener("input",(event)=>{
     // Handle Payment Submit
     
 
+    //###################Get Shipping method start #####################
+
+    // const shippingmethod=await fetch(`https://${Shopify.shop}/apps/proxy-8/shippingmethod?store_domain=${Shopify.shop}`)
+    // const shippingmethoddata=await shippingmethod.json()
+    // console.log('shippingmethoddata',shippingmethoddata)
+
+
+    //###################Get Shipping method start  End#####################
+
     const PaymentSubmit = async (event) => {
         event.preventDefault();
         const PayNOwButton=document.getElementById('Pay__now')
@@ -617,11 +627,11 @@ postalCode.addEventListener("input",(event)=>{
             if (!response.ok) throw new Error('Failed to fetch cart data');
 
             const data = await response.json();
-            const subtotal = data.total_price / 100;
+            subtotal = data.total_price / 100; // Store subtotal globally
             updateUI.productList(data.items, productListContainer);
             updateUI.subtotal(subtotal, subtotalContainer);
             updateUI.totalPrice(subtotal, shippingCost, totalAmountContainer);
-            Cart_Data = data
+            Cart_Data = data;
 
 
             return subtotal;
@@ -631,7 +641,65 @@ postalCode.addEventListener("input",(event)=>{
     };
 
 
+    //################### Get Shipping Method Start #####################
+    const shippingmethod = await fetch(`https://${Shopify.shop}/apps/proxy-8/shippingmethod?store_domain=${Shopify.shop}`);
+    const shippingmethoddata = await shippingmethod.json();
+    console.log('shippingmethoddata', shippingmethoddata);
+    
+    // Get the shipping select element
+    const shippingSelectnew = document.getElementById('shippingMethod');
+    
+    // Clear any existing options (if any)
+    shippingSelectnew.innerHTML = "";
+    
+    // Add the "Ez Delivery" option as default (if you want it pre-selected)
+    let defaultOption = document.createElement("option");
+    defaultOption.value = "Ez Delivery"; // This value can be adjusted as per the actual name of Ez Delivery
+    defaultOption.textContent = "Ez Delivery";
+    defaultOption.selected = true; // Makes it selected by default
+    shippingSelectnew.appendChild(defaultOption);
+    
+    // Loop through the shipping data from API and add options
+    shippingmethoddata.shipping.forEach(shipping => {
+        let option = document.createElement("option");
+        option.value = shipping.ShipmentName; // Shipping method name
+        option.textContent = shipping.ShipmentName; // Display name for the option
+        shippingSelectnew.appendChild(option);
+    });
+    
+    // Add an onchange event listener to the select element to log the price
+    shippingSelectnew.addEventListener('change', function () {
+        // Get the selected shipping method using the correct element
+        const selectedShipping = shippingmethoddata.shipping.find(shipping => shipping.ShipmentName === shippingSelectnew.value);
+        console.log('selectedShippingMethod', selectedShipping);
+        const selectedShipping_value = shippingSelectnew.value;
+        if (selectedShipping_value === "Ez Delivery") {
+            document.getElementById("Shipping__Time").style.display="block"
+            ShippingPrice = 0;
+          totalAmount = subtotal + ShippingPrice;
 
+          // Update UI
+          document.getElementById('shippingCost').textContent = `Rs ${ShippingPrice.toFixed(2)}`;
+          document.getElementById('Checkout_Total_Amount').textContent = `Rs ${totalAmount.toFixed(2)}`;
+        } else {
+            document.getElementById("Shipping__Time").style.display="none"
+        }
+        if (selectedShipping) {
+          // Convert shipping price to float
+          ShippingPrice = parseFloat(selectedShipping.Price) || 0;
+          totalAmount = subtotal + ShippingPrice;
+
+          // Update UI
+          document.getElementById('shippingCost').textContent = `Rs ${ShippingPrice.toFixed(2)}`;
+          document.getElementById('Checkout_Total_Amount').textContent = `Rs ${totalAmount.toFixed(2)}`;
+
+          console.log('Updated Total Amount:', totalAmount)
+            
+            
+        }
+    });
+    
+//################### Get Shipping Method End #####################
     console.log('Extension loaded update');
     console.log('cartdataglobaly', Cart_Data)
 

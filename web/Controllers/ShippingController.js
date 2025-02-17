@@ -26,6 +26,50 @@ export const CreateShipping=async(req,res)=>{
     }
 }
 
+// For arry store code
+
+// export const CreateShipping = async (req, res) => {
+//     try {
+//       const { ShipmentName, Price, Store_Id, store_domain } = req.body;
+  
+//       // Validate required fields
+//       if (!ShipmentName || !Price || !Store_Id || !store_domain) {
+//         return res.status(400).json({ error: "All fields are required" });
+//       }
+  
+//       // Check if the store already has a shipping method
+//       const existingShipping = await ShippingModal.findOne({ Store_Id, store_domain });
+  
+//       if (existingShipping) {
+//         // Check if the ShipmentName already exists in the arrays
+//         if (existingShipping.ShipmentNames.includes(ShipmentName)) {
+//           return res.status(400).json({ error: "Shipping Method Already Exists" });
+//         }
+  
+//         // Add the new ShipmentName and Price to the arrays
+//         existingShipping.ShipmentNames.push(ShipmentName);
+//         existingShipping.Prices.push(Price);
+  
+//         await existingShipping.save();
+  
+//         return res.status(200).json({ success: true, message: "Shipping Method Added Successfully", shipping: existingShipping });
+//       } else {
+//         // Create a new shipping method if it doesn't exist
+//         const shipping = await ShippingModal.create({
+//           ShipmentNames: [ShipmentName],
+//           Prices: [Price],
+//           Store_Id,
+//           store_domain,
+//         });
+  
+//         return res.status(200).json({ success: true, message: "Shipping Method Created Successfully", shipping });
+//       }
+//     } catch (error) {
+//       console.log("Error:", error);
+//       return res.status(500).json({ error: error.message });
+//     }
+//   };
+
 export const GetShipping = async (req, res) => {
     try {
         const { Store_Id, store_domain } = req.query;
