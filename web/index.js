@@ -75,6 +75,8 @@ app.get('/customapi',async(req,res)=>{
   console.log('api hit successfully')
   res.send('hello')
 })
+// weebokk try
+///
 app.get('/api/store/info', async (req, res) => {
   try {
     const Store = await shopify.api.rest.Shop.all({

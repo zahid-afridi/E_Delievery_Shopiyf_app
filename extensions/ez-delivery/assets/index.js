@@ -72,7 +72,7 @@ window.addEventListener('DOMContentLoaded', async () => {
       
             // Create image element (Google Logo)
             const logoImg = document.createElement('img');
-            logoImg.src = 'http://localhost:50288/assets/logo.png   '; // More appropriate Google logo URL
+            logoImg.src = 'http://localhost:61133/assets/logo.png   '; // More appropriate Google logo URL
             logoImg.alt = 'Google Logo';
             logoImg.style.width = '30px'; // Increased logo size
             logoImg.style.height = '30px'; // Increased logo size
@@ -360,7 +360,7 @@ postalCode.addEventListener("input",(event)=>{
             paymentSide: "Sender",
             draft: false,
             codAmount: 0,
-            note: "note",
+            note: getFormData().NoteTExt,
         };
     
         try {
