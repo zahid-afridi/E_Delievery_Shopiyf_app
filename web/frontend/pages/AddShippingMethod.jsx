@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   Button,
   Text,
@@ -88,7 +88,7 @@ export default function AddShippingMethod() {
   };
 
   // Only call FetchShipment when Store_Id is available
-  React.useEffect(() => {
+  useEffect(() => {
     if (Store_Id) {
       FetchShipment();
     }
@@ -166,8 +166,6 @@ export default function AddShippingMethod() {
         </Button>
       </div>
 
-
-      {/* Modal */}
       <Modal
         open={ShipmentModal}
         onClose={() => setShipmentModal(false)}

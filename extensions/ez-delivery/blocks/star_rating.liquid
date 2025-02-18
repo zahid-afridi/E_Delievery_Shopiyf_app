@@ -35,10 +35,13 @@
         <section>
           <h3>Shipping Method</h3>
           {% comment %} <p>This checkout uses Ez Delivery for delivery.</p> {% endcomment %}
-          <input type="text" id="shippingMethod" value="Ez Delivery" readonly>
-        </section>
+          <select id="shippingMethod">
+              <!-- Options will be populated dynamically by JavaScript -->
+          </select>
+      </section>
+      
 
-        <section>
+        <section id="Shipping__Time">
           <h3> Shipping Time</h3>
           <div class="delivery-options-container">
             <div class="input-group">
@@ -52,7 +55,7 @@
     
             <div class="footer">
                <div class="powered-by">
-                    <img style="width:30px ; height: 30px;" src="http://localhost:61133/assets/logo.png" alt="Quiver Logo">
+                    <img style="width:30px ; height: 30px;" src="http://localhost:52773/assets/logo.png" alt="Quiver Logo">
                      <span style="color: #223F8D;">Powered by Ez Delivery</span>
                </div>
                 {% comment %} <span>Saving 1.6kg of CO₂</span> {% endcomment %}

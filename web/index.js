@@ -19,6 +19,7 @@ import StripeRoutes from "./Routes/Stripe.js";
 import PaymentRoutes from "./Routes/PaymentRoute.js";
 import Payment from "./Models/Payment.js";
 import ShippingRoutes from "./Routes/ShippingRoutes.js";
+import ShippingModal from "./Models/ShippingMehtods.js";
 
 const PORT = parseInt(
   process.env.BACKEND_PORT || process.env.PORT || "3000",
@@ -257,6 +258,24 @@ app.post('/customapi/shopify_order_place', async (req, res) => {
   }
 });
 //...........................ORDER_PLACE_API END...............................................
+
+////################### Shipping Get for extension ###########################
+app.get('/customapi/shippingmethod',async(req,res)=>{
+  const {store_domain}=req.query
+  console.log('Store_Doamin shipping',store_domain)
+try {
+  const shipping=await ShippingModal.find({store_domain})
+  if (!shipping) {
+   return res.status(404).json({success:true,message:"No shipping Found"})
+  }
+  res.status(200).json({success:true, shipping})
+} catch (error) {
+  console.log('error',error)
+  return res.status(500).json({success:false,error:error.message})
+}
+
+})
+////################### Shipping Get for extension end ###########################
 app.post("/api/products", async (_req, res) => {
   let status = 200;
   let error = null;
