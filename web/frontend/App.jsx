@@ -6,23 +6,24 @@ import { QueryProvider, PolarisProvider } from "./components";
 import Generatelabel from "./pages/Generatelabel.jsx";
 import React, { useEffect, useState } from "react";
 import LoginForm from "./components/LoginForm.jsx";
-import { Provider } from "react-redux";
-import { store } from "./redux/Store.js";
-import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import { setStoreDetail, setToken, setUser } from "./redux/slices/StoreSlice.js";
 import { BaseUrl } from "./AuthToken/AuthToken.js";
 import Settings from "./pages/Settings.jsx";
+import Profile from "./pages/Profile.jsx";
 
 export default function App() {
   const dispatch = useDispatch();
   const [isLogin, setIsLogin] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
   const [refresh, setRefresh] = useState(false);
+  const [JWTTOKEN, setJWTTOKEN] = useState("");
+  const [formName, setFormName] = useState("SignUp Form");
   console.log("Refresh", refresh);
 
   useEffect(() => {
     storefetch();
+    console.log("JWTTOKEN ", JWTTOKEN);
   }, [refresh]);
 
   const storefetch = async () => {
@@ -58,6 +59,8 @@ export default function App() {
 
           const token = await jwtresponse.json();
           console.log("Token", token.data.accessToken);
+          setJWTTOKEN(token.data.accessToken)
+          console.log(JWTTOKEN)
           if (token) {
             dispatch(setToken(token.data.accessToken));
           }
@@ -98,7 +101,7 @@ export default function App() {
 
   return (
     <PolarisProvider>
-      {isLogin ? (
+      {isLogin && JWTTOKEN ? (
         <>
           <QueryProvider>
             <NavMenu>
@@ -106,15 +109,20 @@ export default function App() {
               <Link to="/Generatelabel" element={<Generatelabel />}>
                 Generate Label
               </Link>
-              
+
               <Link to="/Settings" element={<Settings />}>Payment Gateway Setting</Link>
               <Link to="/AddShippingMethod" element={<Settings />}>Add Shipping Method</Link>
+              <Link to="/Profile" element={<Profile />}>Profile</Link>
             </NavMenu>
             <Routes pages={pages} />
           </QueryProvider>
         </>
       ) : (
-        <LoginForm setRefresh={setRefresh} />
+        <LoginForm
+          setRefresh={setRefresh}
+          Token={JWTTOKEN}
+          formName={formName}
+        />
       )}
     </PolarisProvider>
   );
