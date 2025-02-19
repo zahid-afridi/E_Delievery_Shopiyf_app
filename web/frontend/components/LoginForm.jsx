@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   AppProvider,
   Page,
@@ -11,13 +11,47 @@ import {
 import { useSelector } from "react-redux";
 import toast from "react-hot-toast";
 
-export default function LoginForm({ setRefresh }) {
+export default function LoginForm({ setRefresh, Token, formName }) {
   const [clientId, setClientId] = useState("");
   const [clientSecret, setClientSecret] = useState("");
   const [customerId, setCustomerId] = useState("");
   const [serviceId, setServiceId] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const StoreDetail = useSelector((state) => state.store.StoreDetail);
+  const Tokenvar = useSelector((state) => state.store.Token);
+
+  const Store_Id = StoreDetail.Store_Id;
+
+  const FetchLoginData = async () => {
+    try {
+
+      const response = await fetch(`/api/getData?${Store_Id}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      })
+
+      const data = await response.json();
+      console.log("USER ", data.user);
+
+      if (data.user) {
+        setClientId(data.user.clientId);
+        setClientSecret(data.user.clientSecret);
+        setCustomerId(data.user.customerId);
+        setServiceId(data.user.serviceId);
+      }
+
+    } catch (error) {
+      console.log("Catch Error ", error);
+    }
+  }
+
+  useEffect(() => {
+    FetchLoginData();
+    console.log("Token ", Token)
+    console.log("Token VAR ", Tokenvar)
+  }, [])
 
   const handleSubmit = async () => {
     setIsSubmitting(true);
@@ -46,6 +80,7 @@ export default function LoginForm({ setRefresh }) {
       if (response.ok) {
         toast.success(data.message);
         setRefresh((prev) => !prev);
+        
       }
       if (!response.ok) {
         toast.error(data.message);
@@ -55,6 +90,7 @@ export default function LoginForm({ setRefresh }) {
       console.error("Error submitting form:", error);
     } finally {
       setIsSubmitting(false);
+      FetchLoginData();
     }
 
     // Setting values to null after form submission
@@ -65,9 +101,12 @@ export default function LoginForm({ setRefresh }) {
     console.log("Form submitted:", formData);
     // Add further form submission logic here
   };
+
+  const spacing = { marginBottom: '25px' };
   return (
     <AppProvider>
-      <Page title="Signup Form">
+      <Page title={formName}>
+        <h5 style={spacing}>NOTE : Enter All Fields Correctly Otherwise the app will not work Correctly </h5>
         <Card sectioned>
           <Form onSubmit={handleSubmit}>
             <FormLayout>
@@ -104,7 +143,9 @@ export default function LoginForm({ setRefresh }) {
               </Button>
             </FormLayout>
           </Form>
+
         </Card>
+
       </Page>
     </AppProvider>
   );

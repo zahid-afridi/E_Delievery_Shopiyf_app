@@ -36,11 +36,13 @@ const app = express();
 
 // Set up Shopify authentication and webhook handling
 app.get(shopify.config.auth.path, shopify.auth.begin());
+
 app.get(
   shopify.config.auth.callbackPath,
   shopify.auth.callback(),
   shopify.redirectToShopifyOrAppRoot()
 );
+
 app.post(
   shopify.config.webhooks.path,
   shopify.processWebhooks({ webhookHandlers: PrivacyWebhookHandlers })
@@ -74,16 +76,21 @@ app.use("/api", AuthRoutes);
 app.use('/api',PaymentRoutes)
 app.use("/api",ShippingRoutes);
 app.use("/customapi", StripeRoutes);
+
+// @ts-ignore
 app.get('/customapi',async(req,res)=>{
   console.log('api hit successfully')
   res.send('hello')
 })
 app.use('/forPostman',ShippingRoutes)
+
+// @ts-ignore
 app.get('/forPostman',async(req,res)=>{
   res.send('working bro')
 })
 // weebokk try
 ///
+// @ts-ignore
 app.get('/api/store/info', async (req, res) => {
   try {
     const Store = await shopify.api.rest.Shop.all({
@@ -126,6 +133,7 @@ app.get('/api/store/info', async (req, res) => {
 
 //...........................PAYMENT_GET_API...............................................
 
+// @ts-ignore
 app.get("/customapi/shopify_payment", async (req, res) => {
   try {
     const { store_domain } = req.query;
@@ -170,7 +178,9 @@ app.get("/customapi/shopify_payment", async (req, res) => {
 });
 
 //...........................PAYMENT_GET_API...............................................
+
 //...........................ORDER_PLACE_API...............................................
+// @ts-ignore
 app.post('/customapi/shopify_order_place', async (req, res) => {
   try {
     const {orderData,customerData}=req.body
@@ -180,6 +190,7 @@ app.post('/customapi/shopify_order_place', async (req, res) => {
     const shop = req.query.shop;
 
     // Find the session for the shop
+    // @ts-ignore
     const session = await shopify.config.sessionStorage.findSessionsByShop(shop);
 
     if (!session || session.length === 0) {
@@ -259,6 +270,7 @@ app.post('/customapi/shopify_order_place', async (req, res) => {
 //...........................ORDER_PLACE_API END...............................................
 
 ////################### Shipping Get for extension ###########################
+// @ts-ignore
 app.get('/customapi/shippingmethod',async(req,res)=>{
   const {store_domain}=req.query
   console.log('Store_Doamin shipping',store_domain)
@@ -274,6 +286,7 @@ try {
 }
 
 })
+
 ////################### Shipping Get for extension end ###########################
 app.post("/api/products", async (_req, res) => {
   let status = 200;
@@ -292,6 +305,7 @@ app.post("/api/products", async (_req, res) => {
 app.use(shopify.cspHeaders());
 app.use(serveStatic(STATIC_PATH, { index: false }));
 
+// @ts-ignore
 app.use("/*", shopify.ensureInstalledOnShop(), async (_req, res, _next) => {
   return res
     .status(200)
@@ -302,5 +316,6 @@ app.use("/*", shopify.ensureInstalledOnShop(), async (_req, res, _next) => {
         .replace("%VITE_SHOPIFY_API_KEY%", process.env.SHOPIFY_API_KEY || "")
     );
 });
+
 console.log('port',PORT)
 app.listen(PORT);
