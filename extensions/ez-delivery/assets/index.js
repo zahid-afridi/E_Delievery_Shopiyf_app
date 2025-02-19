@@ -13,6 +13,10 @@ let TrackOrderUrl;
 let ShippingPrice;
 let subtotal;
 window.addEventListener('DOMContentLoaded', async () => {
+   
+
+
+
         // Modal Toggle and Event Listeners
         const modal = document.getElementById("checkoutModal");
         const closeBtn = document.querySelector(".close-button");
@@ -23,6 +27,26 @@ window.addEventListener('DOMContentLoaded', async () => {
         const shippingSelect = document.getElementById('EzDelivery_Option');
         const checkoutButtons = document.querySelectorAll('.cart__checkout-button');
         const NextDayDate = document.getElementById('hideInput');
+        const checkoutButtonForm = document.querySelector(
+            '.cart-notification__links .button--primary[name="checkout"]'
+          );
+          if (checkoutButtonForm) {
+            if (checkoutButtonForm) {
+              checkoutButtonForm.style.display="none !important";
+              
+            }
+          
+          }
+          closeBtn.addEventListener("click",()=>{
+            toggleModal(modal, false)
+          })
+          checkoutButtonForm.addEventListener('click', async (event)=>{
+            event.preventDefault();
+            await fetchCartData(productList, subtotalAmount, TotalAmount, parseFloat(shippingSelect.value || 0) )
+            toggleModal(modal, true);
+          
+        } )
+           
         // const Shipping_MethodSelection=document.getElementById('ShippingMethod')
     
         // Shipping_MethodSelection.addEventListener("change",async()=>{
@@ -90,7 +114,26 @@ window.addEventListener('DOMContentLoaded', async () => {
           }
         }
       }
-      
+      shippingSelect.addEventListener('change', (event) => {
+        const selectedShippingCost = parseFloat(event.target.value) || 0;
+        ShippingPrice=selectedShippingCost
+        shippingCostElement.textContent = `Rs ${selectedShippingCost.toFixed(2)}`;
+        updateUI.totalPrice(subtotal, selectedShippingCost, TotalAmount);
+        if (event.target.value === '18.5') {
+            console.log('next day slected')
+            ServiceId='BevoV05AI59F_Vg8X0jUF'
+            NextDayDate.classList.remove('hideNextDay_Date_Input')
+        } else if (event.target.value === "85.0") {
+            ServiceId='1Vr4gyMBELnYNyXIpyYHE'
+            NextDayDate.classList.add('hideNextDay_Date_Input')
+
+            
+        } else {
+            console.log('not slected')
+            NextDayDate.classList.add('hideNextDay_Date_Input')
+            ServiceId='jYB0d0k5Izh2iXDtGtvT3'
+        }
+    });
       injectTextAndLogo();
         const sameDayDeliveryOption = document.getElementById("Same_day_delivery");
     
@@ -116,29 +159,30 @@ window.addEventListener('DOMContentLoaded', async () => {
             buttons.forEach((button) => {
                 button.addEventListener('click', async (event) => {
                     event.preventDefault();
-                    const subtotal = await fetchCartData(productListContainer, subtotalContainer, totalAmountContainer, parseFloat(shippingSelect.value || 0));
+                     await fetchCartData(productListContainer, subtotalContainer, totalAmountContainer, parseFloat(shippingSelect.value || 0));
+                    // const subtotal = await fetchCartData(productListContainer, subtotalContainer, totalAmountContainer, parseFloat(shippingSelect.value || 0));
                     toggleModal(modal, true);
     
-                    shippingSelect.addEventListener('change', (event) => {
-                        const selectedShippingCost = parseFloat(event.target.value) || 0;
-                        ShippingPrice=selectedShippingCost
-                        shippingCostElement.textContent = `Rs ${selectedShippingCost.toFixed(2)}`;
-                        updateUI.totalPrice(subtotal, selectedShippingCost, totalAmountContainer);
-                        if (event.target.value === '18.5') {
-                            console.log('next day slected')
-                            ServiceId='BevoV05AI59F_Vg8X0jUF'
-                            NextDayDate.classList.remove('hideNextDay_Date_Input')
-                        } else if (event.target.value === "85.0") {
-                            ServiceId='1Vr4gyMBELnYNyXIpyYHE'
-                            NextDayDate.classList.add('hideNextDay_Date_Input')
+                    // shippingSelect.addEventListener('change', (event) => {
+                    //     const selectedShippingCost = parseFloat(event.target.value) || 0;
+                    //     ShippingPrice=selectedShippingCost
+                    //     shippingCostElement.textContent = `Rs ${selectedShippingCost.toFixed(2)}`;
+                    //     updateUI.totalPrice(subtotal, selectedShippingCost, totalAmountContainer);
+                    //     if (event.target.value === '18.5') {
+                    //         console.log('next day slected')
+                    //         ServiceId='BevoV05AI59F_Vg8X0jUF'
+                    //         NextDayDate.classList.remove('hideNextDay_Date_Input')
+                    //     } else if (event.target.value === "85.0") {
+                    //         ServiceId='1Vr4gyMBELnYNyXIpyYHE'
+                    //         NextDayDate.classList.add('hideNextDay_Date_Input')
     
                             
-                        } else {
-                            console.log('not slected')
-                            NextDayDate.classList.add('hideNextDay_Date_Input')
-                            ServiceId='jYB0d0k5Izh2iXDtGtvT3'
-                        }
-                    });
+                    //     } else {
+                    //         console.log('not slected')
+                    //         NextDayDate.classList.add('hideNextDay_Date_Input')
+                    //         ServiceId='jYB0d0k5Izh2iXDtGtvT3'
+                    //     }
+                    // });
                 });
             });
         };
@@ -646,58 +690,63 @@ postalCode.addEventListener("input",(event)=>{
     const shippingmethoddata = await shippingmethod.json();
     console.log('shippingmethoddata', shippingmethoddata);
     
-    // Get the shipping select element
-    const shippingSelectnew = document.getElementById('shippingMethod');
+    // Get the shipping method container
+    const shippingContainer = document.getElementById('shippingMethodContainer');
     
-    // Clear any existing options (if any)
-    shippingSelectnew.innerHTML = "";
+    // Clear any existing content
+    shippingContainer.innerHTML = "";
     
-    // Add the "Ez Delivery" option as default (if you want it pre-selected)
-    let defaultOption = document.createElement("option");
-    defaultOption.value = "Ez Delivery"; // This value can be adjusted as per the actual name of Ez Delivery
-    defaultOption.textContent = "Ez Delivery";
-    defaultOption.selected = true; // Makes it selected by default
-    shippingSelectnew.appendChild(defaultOption);
+    // Function to create styled radio buttons
+    const createRadioButton = (value, label, checked = false) => {
+        const div = document.createElement("div");
+        div.classList.add("single_radio-info");
+    
+        const input = document.createElement("input");
+        input.type = "radio";
+        input.name = "shippingMethod";
+        input.value = value;
+        input.id = value;
+        if (checked) input.checked = true;
+    
+        const labelElement = document.createElement("label");
+        labelElement.htmlFor = value;
+        labelElement.textContent = label;
+    
+        div.appendChild(input);
+        div.appendChild(labelElement);
+        return div;
+    };
+    
+    // Add the default "Ez Delivery" option
+    shippingContainer.appendChild(createRadioButton("Ez Delivery", "Ez Delivery", true));
     
     // Loop through the shipping data from API and add options
     shippingmethoddata.shipping.forEach(shipping => {
-        let option = document.createElement("option");
-        option.value = shipping.ShipmentName; // Shipping method name
-        option.textContent = shipping.ShipmentName; // Display name for the option
-        shippingSelectnew.appendChild(option);
+        shippingContainer.appendChild(createRadioButton(shipping.ShipmentName, shipping.ShipmentName));
     });
     
-    // Add an onchange event listener to the select element to log the price
-    shippingSelectnew.addEventListener('change', function () {
-        // Get the selected shipping method using the correct element
-        const selectedShipping = shippingmethoddata.shipping.find(shipping => shipping.ShipmentName === shippingSelectnew.value);
-        console.log('selectedShippingMethod', selectedShipping);
-        const selectedShipping_value = shippingSelectnew.value;
-        if (selectedShipping_value === "Ez Delivery") {
-            document.getElementById("Shipping__Time").style.display="block"
+    // Add event listener to handle selection change
+    shippingContainer.addEventListener('change', function (event) {
+        const selectedShippingValue = event.target.value;
+        const selectedShipping = shippingmethoddata.shipping.find(shipping => shipping.ShipmentName === selectedShippingValue);
+    
+        if (selectedShippingValue === "Ez Delivery") {
+            document.getElementById("Shipping__Time").style.display = "block";
             ShippingPrice = 0;
-          totalAmount = subtotal + ShippingPrice;
-
-          // Update UI
-          document.getElementById('shippingCost').textContent = `Rs ${ShippingPrice.toFixed(2)}`;
-          document.getElementById('Checkout_Total_Amount').textContent = `Rs ${totalAmount.toFixed(2)}`;
         } else {
-            document.getElementById("Shipping__Time").style.display="none"
+            document.getElementById("Shipping__Time").style.display = "none";
+            ShippingPrice = selectedShipping ? parseFloat(selectedShipping.Price) || 0 : 0;
         }
-        if (selectedShipping) {
-          // Convert shipping price to float
-          ShippingPrice = parseFloat(selectedShipping.Price) || 0;
-          totalAmount = subtotal + ShippingPrice;
-
-          // Update UI
-          document.getElementById('shippingCost').textContent = `Rs ${ShippingPrice.toFixed(2)}`;
-          document.getElementById('Checkout_Total_Amount').textContent = `Rs ${totalAmount.toFixed(2)}`;
-
-          console.log('Updated Total Amount:', totalAmount)
-            
-            
-        }
+    
+        totalAmount = subtotal + ShippingPrice;
+    
+        // Update UI
+        document.getElementById('shippingCost').textContent = `Rs ${ShippingPrice.toFixed(2)}`;
+        document.getElementById('Checkout_Total_Amount').textContent = `Rs ${totalAmount.toFixed(2)}`;
+    
+        console.log('Updated Total Amount:', totalAmount);
     });
+    
     
 //################### Get Shipping Method End #####################
     console.log('Extension loaded update');

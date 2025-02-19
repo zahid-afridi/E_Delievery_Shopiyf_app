@@ -88,9 +88,9 @@ export default function App() {
   if (isLoading) {
     return (
       <>
-      <div style={{display:'flex',justifyContent:"center",minHeight:"100vh",alignItems:"center"}}>
-      <Spinner accessibilityLabel="Spinner example" size="large"  />
-      </div>
+        <div style={{ display: 'flex', justifyContent: "center", minHeight: "100vh", alignItems: "center" }}>
+          <Spinner accessibilityLabel="Spinner example" size="large" />
+        </div>
       </>
     );
   }
