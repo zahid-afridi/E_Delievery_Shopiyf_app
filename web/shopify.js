@@ -38,4 +38,5 @@ const shopify = shopifyApp({
   sessionStorage: new SQLiteSessionStorage(DB_PATH),
 });
 
+
 export default shopify;

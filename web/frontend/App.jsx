@@ -27,6 +27,24 @@ export default function App() {
     console.log("JWTTOKEN ", JWTTOKEN);
   }, [refresh]);
 
+useEffect(()=>{
+   CreateCarierSevier()
+},[])
+  const CreateCarierSevier=async()=>{
+    try {
+      const res=await fetch("/api/shipping-create",{
+        method:"POST",
+        headers:{
+          "Content-Type":"application/json",
+        },
+      
+      })
+      const data=await res.json();
+      console.log('carrierSever',data)
+    } catch (error) {
+      console.log('er',error)
+    }
+  }
   const storefetch = async () => {
     setIsLoading(true);
     try {

@@ -1,7 +1,7 @@
 # Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
 
 client_id = "114ba644127ad3f4278c8e384c114827"
-application_url = "https://charles-ui-asset-jump.trycloudflare.com"
+application_url = "https://milan-ee-terminal-girl.trycloudflare.com"
 embedded = true
 name = "ez-delievry"
 handle = "ez-delievry"
@@ -16,17 +16,17 @@ api_version = "2024-10"
 
 [access_scopes]
 # Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
-scopes = "read_assigned_fulfillment_orders,read_content,read_customers,read_delivery_customizations,read_merchant_managed_fulfillment_orders,read_orders,read_products,read_script_tags,read_shipping,read_themes,read_third_party_fulfillment_orders,write_assigned_fulfillment_orders,write_content,write_customers,write_delivery_customizations,write_merchant_managed_fulfillment_orders,write_orders,write_products,write_script_tags,write_shipping,write_themes,write_third_party_fulfillment_orders"
+scopes = "read_assigned_fulfillment_orders,read_content,read_customers,read_delivery_customizations,read_merchant_managed_fulfillment_orders,read_orders,read_products,read_script_tags,read_shipping,read_themes,read_third_party_fulfillment_orders,write_assigned_fulfillment_orders,write_content,write_customers,write_delivery_customizations,write_merchant_managed_fulfillment_orders,write_orders,write_products,write_script_tags,write_shipping,write_themes,write_third_party_fulfillment_orders,write_cart_transforms,read_payment_customizations,write_payment_customizations"
 
 [auth]
 redirect_urls = [
-  "https://charles-ui-asset-jump.trycloudflare.com/auth/callback",
-  "https://charles-ui-asset-jump.trycloudflare.com/auth/shopify/callback",
-  "https://charles-ui-asset-jump.trycloudflare.com/api/auth/callback"
+  "https://milan-ee-terminal-girl.trycloudflare.com/auth/callback",
+  "https://milan-ee-terminal-girl.trycloudflare.com/auth/shopify/callback",
+  "https://milan-ee-terminal-girl.trycloudflare.com/api/auth/callback"
 ]
 
 [app_proxy]
-url = "https://charles-ui-asset-jump.trycloudflare.com/customapi"
+url = "https://milan-ee-terminal-girl.trycloudflare.com/customapi"
 subpath = "proxy"
 prefix = "apps"
 
