@@ -20,6 +20,7 @@ import PaymentRoutes from "./Routes/PaymentRoute.js";
 import Payment from "./Models/Payment.js";
 import ShippingRoutes from "./Routes/ShippingRoutes.js";
 import ShippingModal from "./Models/ShippingMehtods.js";
+import { time } from "console";
 
 const PORT = parseInt(
   process.env.BACKEND_PORT || process.env.PORT || "3000",
@@ -91,6 +92,9 @@ app.get('/forPostman',async(req,res)=>{
 // weebokk try
 ///
 // @ts-ignore
+///order webhook
+
+///order webhookend
 app.get('/api/store/info', async (req, res) => {
   try {
     const Store = await shopify.api.rest.Shop.all({
@@ -176,6 +180,111 @@ app.get("/customapi/shopify_payment", async (req, res) => {
     });
   }
 });
+// carriersevice
+app.post('/api/shipping-create', async (req, res) => {
+  try {
+    const { session } = res.locals.shopify;
+    const callbackUrl = `https://ez-delivery-cc3d45a6180d.herokuapp.com/Shipping/api/get-shipping`;
+
+    // 1. Get all existing carrier services
+    const carrierServices = await shopify.api.rest.CarrierService.all({ session });
+    console.log('Existing Carrier Services:', carrierServices.data);
+
+    // 2. Find ALL matching services (including typos)
+    const servicesToDelete = carrierServices.data.filter(s => 
+      s.name.toLowerCase().includes('ez') || 
+      s.name.toLowerCase().includes('delivery') ||
+      s.name.toLowerCase().includes('deliviery')
+    );
+
+    // 3. Delete all matching services
+    if (servicesToDelete.length > 0) {
+      await Promise.all(servicesToDelete.map(async (service) => {
+        await shopify.api.rest.CarrierService.delete({
+          session,
+          id: service.id,
+        });
+        console.log(`Deleted service: ${service.name} (${service.id})`);
+      }));
+    }
+
+    // 4. Create new service with exact name
+    const carrierService = new shopify.api.rest.CarrierService({ session });
+    carrierService.name = "Ez Delivery"; // Exact name
+    carrierService.callback_url = callbackUrl;
+    carrierService.active = true;
+    carrierService.format = "json";
+    carrierService.service_discovery = false; // Match Remix settings
+    
+    await carrierService.save();
+
+    console.log('Created new service:', carrierService);
+    res.status(200).json({ success: true, carrierService });
+
+  } catch (error) {
+    console.error('Carrier service error:', error);
+    res.status(500).json({ 
+      success: false, 
+      error: error.message,
+      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+    });
+  }
+});
+// carrierseviceend
+
+app.post("/Shipping/api/get-shipping", async (req, res) => {
+  try {
+    const now = new Date();
+    const localHour = now.toLocaleString("en-US", { hour: "numeric", hour12: false });
+    const rates = [
+    
+      
+    ];
+
+  
+    if (localHour <12) {
+      rates.push(
+        {
+          service_name: "Same day Ez Delivery",  // This will be displayed
+          service_code: "EZ_SAME_DAY",  // Must be unique
+          total_price: "10.00",
+          currency: "USD",
+          description: "  Delivered between 4PM-8PM",
+          // Add these required fields
+          min_delivery_date: new Date().toISOString(),
+          max_delivery_date: new Date(Date.now() + 86400000).toISOString() // +24h
+        },
+        {
+          service_name: "Next day Ez Delivery",  // This will be displayed
+          service_code: "EZ_NEXT_DAY",  // Must be unique
+          total_price: "15.00",
+          currency: "USD",
+          description: "   Delivered between 4PM-8PM",
+          min_delivery_date: new Date(Date.now() + 86400000).toISOString(),
+          max_delivery_date: new Date(Date.now() + 172800000).toISOString() // +48h
+        },
+      )
+    }else{
+      rates.push(
+        {
+          service_name: "Next day Ez Delivery",  // This will be displayed
+          service_code: "EZ_NEXT_DAY",  // Must be unique
+          total_price: "15.00",
+          currency: "USD",
+          description: "   Delivered between 4PM-8PM",
+          min_delivery_date: new Date(Date.now() + 86400000).toISOString(),
+          max_delivery_date: new Date(Date.now() + 172800000).toISOString() // +48h
+        },
+      )
+    }
+  
+    res.status(200).json({ rates });
+  } catch (error) {
+    console.log("error", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
 
 //...........................PAYMENT_GET_API...............................................
 
